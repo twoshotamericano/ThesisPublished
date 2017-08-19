@@ -1,0 +1,353 @@
+# Traditional Approach {#TraditionalApproach}
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(xtable)
+library(MASS)
+library(texreg)
+
+data2<-read.table(file="Analysis/Data/HousePriceData.csv",header=TRUE,sep=",",stringsAsFactors = TRUE)
+
+options("xtable.type"="html")
+
+```
+
+**Recap**
+
+I am looking to use a multiple linear regression model to predict house prices using a sample data set from the website @kaggle1. The data contains property sales prices for transactions between May 2014 and May 2015 in King County USA which includes Seattle.
+
+I start by looking at any online literature on house price prediction. This "meta analysis" has two purposes:
+
+- It helps select variables to include in the model 
+- It adds credibility to my findings if I incorporate and build on the empirical evidence of previous research studies
+
+I then perform a formal model selection procedure. This involves:
+
+- Variable selection
+- Model fitting
+- Diagnostics
+- Selection between competing models
+
+Having selected a final model, I then use the model to make predictions about property prices.
+
+**Meta Analysis**
+
+My data set only includes information on **micro variables**. These *micro variables* relate to the intrinsic features of a property and its immediate environment. By contrast, *macro variables* are excluded. These relate to the "external environment" of the property (see examples below). 
+
+By excluding macro variables, the parameter estimates of my model could be **biased**. For example, the data comes from the period from May 2014 to May 2015 when the external environment in the US was relatively stable. This means that the level of noise in the data could be artificially low and the explanatory power of micro variables overstated.
+
+To mitigate this risk I have performed a quick online literature search and identified micro variables which previous research studies have found to be significant predictors of property price. I have included these variables as the starting point of the model selection process. This should lead as much overlap as possible between my model and previous studies and stops me relying 100% on a statistical model selection procedure which is vulnerable to bias.
+
+**Micro variable Examples**
+
+- Property location
+- Building features
+- Interior Layout
+- Quality of fixture and fittings
+
+**Macro variable Examples**
+
+- National and local government policies
+- the state of the mortgage market
+- interest rates
+- unemployment levels in the job market
+- demographics 
+
+**Results of online search**
+
+The table below shoes the micro-variables identified online, the reference article and the matching field in the database. Article 1 is [@galati2011macro], Article 2 is [@candas2015], Website 1 is [@rightmove]
+
+
+|Micro-variable         | Reference | Data-Set Field  |
+|-----------------------|:---------:|-----------------|
+|Year of Construction   | Article 1 |Construction Year|
+|Size of Living Room    | Article 1 |Living Space     |
+|Presence of Garage     | Article 1 |                 |
+|Presence of Garden     | Article 1 |                 |
+|Type of House          | Article 1 |Number of Floors |
+|Large City vs not large| Article 1 |Seattle ZipCode  |
+|Degree of Urbanization | Article 1 |                 |
+|Floor No               | Article 2 |Floors           |
+|Heating System         | Article 2 |Renovation Year  |
+|Earthquake Zone        | Article 2 |                 |
+|Rental Value           | Article 2 |                 |
+|Land Value             | Article 2 |                 |
+|Parcel Area            | Article 2 |Total Area       |
+|Zoning                 | Article 2 |Zipcode          |
+|Proximity to Amenities | Website 1 |                 |
+|Number of Bedrooms     | Website 1 |Bedrooms         |
+|Number of Bathrooms    | Website 1 |Bathrooms        |
+|Age of Building        | Website 1 |                 |
+|Condition of Interior  | Website 1 |Condition/Grade  |
+
+
+**Model Selection**
+
+**Correlation Matrix**
+
+
+```{r, echo=FALSE}
+#Some data manipulation to convert factors to numeric
+#Base R cannot calculate a correlation matrix with factor variables
+data3<-data2
+
+#Rename a Variable
+data3<-rename(data3,
+              AboveGroundFloorArea=AboveGroundFloor,
+              Condition=condition,
+              Grade=grade)
+
+#Reclassify a factor
+data3$RenovationFlag<-as.numeric(levels(data2$RenovationFlag)=="Yes")[data2$RenovationFlag]
+data3$SeattleFlag<-as.numeric(levels(data2$SeattleFlag)=="Yes")[data2$SeattleFlag]
+
+#Subset the dataframe
+data3<-subset(data3,select=c(ConstructionYear,
+                      LivingSpace,
+                      NumberOfFloors,
+                      SeattleFlag,
+                      RenovationYear,
+                      TotalArea,
+                      NumberOfBedrooms,
+                      NumberOfBathrooms,
+                      Condition,
+                      Grade,
+                      AboveGroundFloorArea,
+                      BasementSize,
+                      SaleMonth,
+                      View,
+                      RenovationFlag,
+                      WaterfrontView,
+                      SaleYear,
+                      LogSalePrice
+                      ))
+
+data4<-subset(data3,select=c(ConstructionYear,
+                      LivingSpace,
+                      NumberOfFloors,
+                      SeattleFlag,
+                      RenovationYear,
+                      TotalArea,
+                      NumberOfBedrooms,
+                      NumberOfBathrooms,
+                      Condition,
+                      Grade
+                      ))
+
+```
+
+The correlation plot below shows that none of the data-set variables identified from the meta analysis are highly correlated (r>80%). This means they can all be included in the model without causing issues regarding multi-collinearity and non-convergence of the model fitting algorithm.
+
+```{r, echo=FALSE}
+mcor1<-round(cor(data4),digits=2)
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+corrplot::corrplot(mcor1, 
+         method="shade", 
+         cl.cex=0.75,
+         shade.col=NA, 
+         type="lower",
+         addCoef.col="black",
+         tl.srt=45,
+         addCoefasPercent = TRUE,
+         number.cex=0.75
+         )
+
+
+
+
+
+```
+
+The full correlation plot for the data-set is shown below. The bottom row shows the correlations between the data-set variables and `LogSalePrice`. The top five correlated variables are `LivingSpace`, `Grade`,`AboveGroundFloorArea`, `NumberOfBathrooms`, `View`. All of which are positively correlated with `LogSalePrice`.
+
+```{r, echo=FALSE}
+#Full Correlation Matrix
+mcor2<-round(cor(data3),digits=2)
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+corrplot::corrplot(mcor2, 
+         method="shade", 
+         cl.cex=0.5,
+         shade.col=NA, 
+         type="lower",
+         addCoef.col="black",
+         tl.srt=45,
+         addCoefasPercent = TRUE,
+         number.cex=0.5
+         )
+```
+
+
+
+**Model Fitting**
+
+Model 1 was fitted using only the variables identified in the meta-analysis. Models 2 to 5 were obtained using a step-wise AIC procedure to automatically select new models. Model 5 is where the procedure terminated.
+
+```{r,echo=FALSE, warning=FALSE,error=FALSE, results='asis'}
+attach(data3)
+fit1<-lm(LogSalePrice ~
+        ConstructionYear+
+        LivingSpace+
+        NumberOfFloors+
+        SeattleFlag+
+        RenovationYear+
+        TotalArea+
+        NumberOfBedrooms+
+        NumberOfBathrooms+
+        Condition+
+        Grade)
+
+fit2<-lm(LogSalePrice ~
+        ConstructionYear+
+        LivingSpace+
+        NumberOfFloors+
+        SeattleFlag+
+        RenovationYear+
+        TotalArea+
+        NumberOfBedrooms+
+        NumberOfBathrooms+
+        Condition+
+        Grade+
+        WaterfrontView)
+
+fit3<-lm(LogSalePrice ~
+        ConstructionYear+
+        LivingSpace+
+        NumberOfFloors+
+        SeattleFlag+
+        RenovationYear+
+        TotalArea+
+        NumberOfBedrooms+
+        NumberOfBathrooms+
+        Condition+
+        Grade+
+        WaterfrontView+
+        View)
+
+fit4<-lm(LogSalePrice ~
+        ConstructionYear+
+        LivingSpace+
+        NumberOfFloors+
+        SeattleFlag+
+        RenovationYear+
+        TotalArea+
+        NumberOfBedrooms+
+        NumberOfBathrooms+
+        Condition+
+        Grade+
+        WaterfrontView+
+        View+
+        SaleYear)
+
+fit5<-lm(LogSalePrice ~
+        ConstructionYear+
+        LivingSpace+
+        NumberOfFloors+
+        SeattleFlag+
+        RenovationYear+
+        TotalArea+
+        NumberOfBedrooms+
+        NumberOfBathrooms+
+        Condition+
+        Grade+
+        WaterfrontView+
+        View+
+        SaleYear+
+        AboveGroundFloorArea)
+
+detach(data3)
+
+a<-anova(fit1,fit5)
+
+b<-data.frame(Model=c("Fit1","Fit5"),
+              DoF=a$Res.Df,
+              RSS=round(a$RSS,0),
+              "DOF_Diff"=a$Df,
+              SUmOfSq=a$`Sum of Sq`,
+              FProb=round(a$`Pr(>F)`,2))
+
+table2<-xtable(b,
+               caption="Statistical Test Model 5 vs Model 1")
+
+
+htmlreg(list(fit1,fit2,fit3,fit4,fit5),
+       caption='Automated Model Selection',
+       caption.above=TRUE)
+
+```
+
+The $R^{2}$ value of Model 1 is `r round(summary(fit1)$r.squared,2)`. This seems relatively low with the regression fit only explaining circa `r round(summary(fit1)$r.squared*100,0)`% of the total variation about the mean. 
+
+The $R^{2}$ value of Model 5 is `r  round(summary(fit5)$r.squared,2)`. This also seems relatively low and only a small improvement on Fit 1. It is however statistically significant and we would reject the null hypothesis that the final model has no explanatory power in a formal test at the 0.1% level (see below).
+
+```{r,echo=FALSE,warning=FALSE, error=FALSE, results='asis'}
+
+
+print.xtable(table2,caption.placement="bottom")
+
+```
+
+I don't think the improvement in fit in Model 5 is worth the extra four variable required and will use Model 1. For Model 1 it needs to be investigated further why the coefficients for `NumberOfBedrooms` and `ConstructionYear` have changed sign versus the values in the correlation matrix.
+
+**Diagnostics**
+
+The chart below present visually key checks on whether the assumptions of the model are met. There is nothing to suggest that the residuals have a trend. The variability of the residuals does not change with fitted value and appears to follow a normal distribution. Two observations "6022" and "2061" have high leverage (influence on own fitted value) and high standardised residual (greater deviance from zero than expected). They do not have a Cook's distance greater than 0.5 and hence do not have a material impact on fitted coefficient values. 
+
+```{r, echo=FALSE, results='asis', fig.cap="Visual Checks on Model 1"}
+
+
+par(mfrow=c(2,2))
+plot(fit1)
+```
+
+
+```{r, echo=FALSE, warning=FALSE, eval=FALSE}
+
+attach(data3)
+fit1<-lm(LogSalePrice ~
+        ConstructionYear+
+        LivingSpace+
+        NumberOfFloors+
+        SeattleFlag+
+        RenovationYear+
+        TotalArea+
+        NumberOfBedrooms+
+        NumberOfBathrooms+
+        Condition+
+        Grade)
+
+fit2<-lm(LogSalePrice ~
+           ConstructionYear+
+           LivingSpace+
+           NumberOfFloors+
+           SeattleFlag+
+           RenovationYear+
+           TotalArea+
+           NumberOfBedrooms+
+           NumberOfBathrooms+
+           Condition+
+           Grade+
+           AboveGroundFloorArea+
+           BasementSize+
+           SaleMonth+
+           View+
+           RenovationFlag+
+           WaterfrontView+
+           SaleYear
+           )
+step <- stepAIC(a, direction="both",scope=list(upper=fit2,lower=fit1))
+
+detach(data3)
+```
+
+
+
+```{r, echo=FALSE,results='asis',error=FALSE, eval=FALSE}
+xtable(summary(step)$coefficients,
+       caption="Simple Regression Coefficients",
+       digits=1)
+
+print.xtable()
+```
+
+
+

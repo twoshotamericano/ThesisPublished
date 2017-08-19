@@ -1,0 +1,16 @@
+# Reproducibility {#Reproducibility}
+
+**Source Files for Reproducibility**
+
+This project has been written using the R package `Bookdown`. For reproducibility, all source files and data are available on my GitHub repository [here](https://github.com/twoshotamericano/Thesis). To recreate this document just clone the repository and save it in the Thesis folder at the following location `C:/ThesisSource/Thesis`.
+
+**Session info for Reproducibility**
+
+The R session info when compiling this book is shown below:
+
+```{r SessionInfo, echo=FALSE}
+sessionInfo()
+
+```
+
+

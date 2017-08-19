@@ -1,0 +1,19 @@
+
+# Regression Recap {#RegressionRecap}
+
+The case study relies on an understanding of Univariate and Multivariate regression. The mind-maps below cover the key areas and formulas:
+
+(ref:LinearRegression1) Univariate Linear Regression
+
+```{r LinearRegression1,echo=FALSE, fig.cap='(ref:LinearRegression1)'}
+knitr::include_graphics("Analysis/Images/MindMap2.jpg")
+```
+
+
+(ref:LinearRegression2) Multivariate Linear Regression
+
+```{r LinearRegression2,echo=FALSE, fig.cap='(ref:LinearRegression1)'}
+knitr::include_graphics("Analysis/Images/MindMap1.jpg")
+```
+
+
