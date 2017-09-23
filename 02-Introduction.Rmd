@@ -14,7 +14,10 @@ I want us to solve an applied problem together using R Studio. I downloaded a da
 
 The data contains property sales prices for transactions between May 2014 and May 2015 in King County USA which includes Seattle. I downloaded it from the website @kaggle1. For each of the 21000 properties, we are given the sale price and variables describing the property (eg. number of bedrooms, size of living space,...).
 
-The location of the properties is plotted in Figure \@ref(fig:Intro1) below. I am happy to use a multiple linear regression model to predict house prices. I do not believe we would get a more accurate prediction model by linking response and explanatory variables with something more complicated!! Our key constraint is understanding the data!!
+The location of the properties is plotted in Figure \@ref(fig:Intro1) below.There is a spatial aspect to property prices "location, location, location" which can be analysed with Spatial Statistics. This approach however is highly complex and I want to start with an exploratory analysis using Linear Multivariate Statistics. 
+
+Lets start with some exploratory analysis to understand 
+I am happy to use a multiple linear regression model to predict house prices. I do not believe we would get a more accurate prediction model by linking response and explanatory variables with something more complicated!! Our key constraint is understanding the data!!
 
 (ref:Intro1) Here is the 21,000 properties in Seattle. The dots represent individual properties. Dark red properties are high value and light red properties are low value.
 

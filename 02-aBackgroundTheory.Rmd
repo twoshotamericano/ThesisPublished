@@ -1,0 +1,98 @@
+# Background Theory {#Theory}
+
+# Key Elements of Multivariate Statistics
+
+Multivariate statistics is concerned with the properties of multi-dimensional random vectors. We study the properties of the p-dimensional Random Vector $\underset{(p \times 1)}{Z}$, by capturing repeated measurements. For ease of study we arrange these n observations into an n by p data matrix:
+$$\underset{(n \times p)}{X}=\begin{bmatrix}\underset{(1 \times p)}{X_{1}^{'}}\\\underset{(1 \times p)}{X_{2}^{'}}\\....\\\underset{(1 \times p)}{X_{n}^{'}}\end{bmatrix}=
+\begin{bmatrix}X_{11} & X_{12} & ...& X_{1p}\\X_{21} & X_{22} &... & X_{2p}\\....&....&....&....\\X_{11} & X_{12} &....&X_{np}\end{bmatrix}$$
+
+A key simplifying assumption in Multivariate Analysis is that our observations constitute a Random Sample. The p-components within any observation vector $X_{ij}$ are allowed to be correlated but the components in different observations must be independent. Furthermore the joint distribution function $f(.)$ is the same for any observation vector $X_{i}$. In symbols:
+
+$$f(X_{1},X_{2},...,X_{n})=f_{1}(X_{1})f_{2}(X_{2})..f_{n}(X_{n})=f(X_{1})f(X_{2})..f(X_{n})$$
+
+In Multivariate Analysis, we study the properties of the sample using three fundamental objects: the sample mean 
+$$\underset{(p \times 1)}{\overline{X}}=\frac{\underset{(p \times n)}{X^{´}}\underset{(n \times 1)}{1}}{n}$$, the sample covariance matrix $$\underset{(p \times p)}{S}=\frac{X^{´}(I-\frac{11^{´}}{n})X}{n-1}$$ and the sample correlation matrix $$\underset{(p \times p)}{R}=D^{-\frac{1}{2}}SD^{-\frac{1}{2}}$$ where $D^{-\frac{1}{2}}$ is the diagonal matrix with $D^{-\frac{1}{2}}_{ii}=\frac{1}{\sqrt{S_{ii}}}$ .
+
+Each of these objects has fundamental importance due to capturing different geometrical properties of the sample. We see this by considering the sample data matrix as p measurement vectors $Y_{i}$ in an n-dimensional space:
+
+$$\underset{(n \times p)}{X}=
+\begin{bmatrix}X_{11} & X_{12} & ...& X_{1p}\\X_{21} & X_{22} &... & X_{2p}\\....&....&....&....\\X_{11} & X_{12} &....&X_{np}\end{bmatrix}=\begin{bmatrix}\underset{(n \times 1)}{Y_{1}} & \underset{(n \times 1)}{Y_{2}} & ...& \underset{(n \times 1)}{Y_{p}}\end{bmatrix}$$
+
+By decomposing each n-dimensional measurement into a component parallel and perpendicular to the unit vector, ie. $Y_{i}=Y_{i} \bullet \frac{1}{\sqrt{n}}+d_{i}$ where the deviance is defined as $d_{i}=Y_{i}-Y_{i} \bullet \frac{1}{\sqrt{n}}$ and $1=[1,1,..,1]^{´}$. It is possible to identify the sample mean, $\overline{X}_{i}=Y_{i} \bullet \frac{1}{\sqrt{n}}$, the diagonal components of the Sample Covariance Matrix $S_{ii}=\frac{\mid d_{i}\mid ^{2}}{n-1}$ and the off-diagonal components of the correlation matrix $r_{ij}=\frac{d_{i} \bullet d_{j}}{\mid d_{i} \mid \mid d_{j} \mid}$.
+
+See Ref[] page 136 for further details.
+
+# Linear Preditors
+
+Fundamentally I am interested in predicting property sale price as accurately as possible using information about the property. In the language of regression, my response variable is "property price" and my "explanatory variables" are property characteristics.
+
+In keeping with the approach to Multivariate Analysis in [], I will measure prediction model accuracy using a mean square error criterion. That is the technically better prediction model will have a lower value for the function $MSE=E[(Price_{i}-Preduction_{i})^2]$.
+
+Additionally, I restrict my attention to "best linear predictors".This means that my predicted property values will vary continuously with the explanatory variables and my prediction function has the form $b_{0} + b^{'}Z$ where $b_{0}$ and ${b}$ are constants. There are two advantages to this approach. Firstly, if I can transform my data so that it appears to be multivariate normally distributed, then the best predictor will be linear in the explanatory variables.(p425). Secondly linear models have the non-technical advantage of being easier to interpret and manipulate. We can use them to better understand our data before moving to more advanced techniques!
+
+# Best Linear Predictors
+
+It is a relatively straightforward analytical exercise to establish the parameter values for the best linear predictor of a response variable $Y$ given explanatory data $Z$. Furthermore this can be achieved with a minimum of assumptions (see below).
+
+Let $Y$,$Z_{1}$,$Z_{2}$,...,$Z_{r}$ represent a univariate response and r predictor variables respectively. We treat these variables as Random and being generated from a joint distribution with mean $\underset{(r+1) \times 1}{\mu}$ and covariance matrix $\underset{(r+1) \times (r+1)}{\Sigma}$ which we assume to have full rank. 
+
+The linear predictor of $Y$ using $Z_{1}$,$Z_{2}$,...,$Z_{r}$,  has the form $b_{0}+b_{1}Z_{1}+b_{2}Z_{2}+...+b_{r}Z_{r}=b_{0}+b_{z}^{´}Z$. For ease of analysis we partition the mean and covariance matrix as follows:
+
+$$\mu = \begin{bmatrix} \underset{(1 \times 1)}{\mu_{Y}}\\
+\underset{(r \times 1)}{\mu_{Z}}
+\end{bmatrix}$$,
+
+$$\Sigma = \begin{bmatrix} \underset{(1 \times 1)}{\sigma_{YY}} \underset{(1 \times r)}{\sigma_{YZ}}\\
+\underset{(r \times 1)}{\sigma_{ZY}} \underset{(r \times r)}{\sigma_{ZZ}}
+\end{bmatrix}$$
+
+The Mean Square Error can be calculated as follows:
+
+\begin{equation} 
+\begin{split}
+\mathrm{MSE}(b_{0},b_{z}) & =\mathrm{E}(Y-b_{0}-b_{z}^{´}Z)^2\\
+ & =\mathrm{E}(Y-b_{0}-b_{z}^{´}Z + (\mu_{Y}-b_{z}^{´}\mu_{Z}) -(\mu_{Y}-b_{z}^{´}\mu_{Z}))^2\\
+ & =\mathrm{E}(Y-\mu_{Y} -(b_{z}^{´}Z-b_{z}^{´}\mu_{Z})+(\mu_{Y}-b_{0}-b_{z}^{´}\mu_{Z}))^2\\
+ & =\mathrm{E}(Y-\mu_{Y})^2+\mathrm{E}(b_{z}^{´}(Z-\mu_{Z}))^2+(\mu_{Y}-b_{0}-b_{z}^{´}\mu_{Z})^2 -2\mathrm{E}(b_{z}^{´}(Z-\mu_{Z})(Y-\mu_{Y}))\\
+ & =\sigma_{YY}+b_{z}^{´}\mathrm{E}((Z-\mu_{Z})(Z-\mu_{Z})^{´})b_{z}+(\mu_{Y}-b_{0}-b_{z}^{´}\mu_{Z})^2 -2b_{z}^{´}\mathrm{E}((Z-\mu_{Z})(Y-\mu_{Y}))\\
+ & = \sigma_{YY} + b_{z}^{´}\sigma_{ZZ}b_{z}+(\mu_{Y}-b_{0}-b_{z}^{´}\mu_{Z})^2-2b_{z}^{´}\sigma_{ZY}\\
+ & = \sigma_{YY} + b_{z}^{´}\sigma_{ZZ}b_{z}+(\mu_{Y}-b_{0}-b_{z}^{´}\mu_{Z})^2-2b_{z}^{´}\sigma_{ZY}+\sigma_{ZY}^{´}\Sigma_{ZZ}^{-1}\sigma_{ZY}-\sigma_{ZY}^{´}\Sigma_{ZZ}^{-1}\sigma_{ZY}\\
+ &= \sigma_{ZZ}-\sigma_{ZY}^{´}\Sigma_{ZZ}^{-1}\sigma_{ZY}+(\mu_{Y}-b_{0}-b_{z}^{´}\mu_{Z})^2+(b_{Z}-\Sigma_{ZZ}^{-1}\sigma_{ZY})^{´}\Sigma_{ZZ}(b_{Z}-\Sigma_{ZZ}^{-1}\sigma_{ZY})
+\end{split}
+\end{equation} 
+
+Which can be minimised by setting:
+\begin{align} 
+b_{Z} &= \Sigma_{ZZ}^{-1}\sigma_{ZY}\\
+b_{0} &= \mu_{Y}-b_{Z}^{´}\mu_{Z}
+\end{align} 
+
+
+Lets consider the problem of predicting $Y$ using a linear predictor of the form $b_{0} + b^{'}Z$. What is the linear predictor which minimises the mean square prediction error= $E[(Y-b_{0} - b^{'}Z)]^{2}$?
+
+
+If I can transform my data so that it appears approximately multivariate normal, then 
+
+There are two reasons for this, firstly if it appears the data is generated by a multivariate normal distribution
+
+constructing the "best linear predictor"" of a Property's price given its known characteristics. If I can demonstrate that the assumption of a multivariate normal distribution is valid (p425), the best linear predictor and the regression function co-incide. That is, the best predictor of Y given Z (aka. the regression function) is the best linear predictor.
+
+
+
+
+In the subsequent chapters I want to investigate the best linear predictor of property prices using three slightly different techniques.As we shall see the Classical Linear Regression approach emphasises the importance of the sample mean, the Principal Component Analysis approach emphasises the sample covariance matrix and Factor Analysis is a mixture of both!
+
+The best linear predictor arises in Multivariate Analysis as follows. Let $Y, Z_{1},....,Z_{r}$ represent univariate "Response" and "Random Variables" respectively. Let their mean vector be $\underset{(r+1 \times 1)}{\mu}$ and their (Full Rank) covariance matrix be $\underset{(r+1 \times r+1)}{\Sigma}$ which we partition as:
+
+
+
+
+That is, the rows of the data matrix are independently distributed. 
+
+We make a key assumption about the structure of the 
+
+
+In multivariate statistics we are interested in explaining the properties of a p-dimensional Random Vector X using a 
+
+
+I want to develop a model where the Response Variable Y (aka the Property Price) depends in a continuous manner on the Property Characteristics Z.
