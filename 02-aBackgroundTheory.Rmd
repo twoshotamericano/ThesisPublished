@@ -1,12 +1,14 @@
 # Multivariate Analysis {#Theory}
 
-**Key Elements of Multivariate Statistics**
+##Key Elements of Multivariate Statistics
 
 Multivariate statistics is concerned with the properties of multi-dimensional random vectors. We study the properties of the p-dimensional Random Vector $\underset{(p \times 1)}{Z}$, by capturing repeated measurements. For ease of study we arrange these n observations into an n by p data matrix:
 
 ```{definition, name="Data Matrix"}
 $$\underset{(n \times p)}{X}=\begin{bmatrix}\underset{(1 \times p)}{X_{1}^{'}}\\\underset{(1 \times p)}{X_{2}^{'}}\\....\\\underset{(1 \times p)}{X_{n}^{'}}\end{bmatrix}=
 \begin{bmatrix}X_{11} & X_{12} & ...& X_{1p}\\X_{21} & X_{22} &... & X_{2p}\\....&....&....&....\\X_{11} & X_{12} &....&X_{np}\end{bmatrix}$$
+
+$\square$
 
 ```
 
@@ -20,6 +22,9 @@ f(X_{1},X_{2},...,X_{n}) & =f_{1}(X_{1})f_{2}(X_{2})..f_{n}(X_{n})\\
  & =f(X_{1})f(X_{2})..f(X_{n})
 \end{split}
 \end{equation} 
+
+$\square$
+
 ```
 
 In Multivariate Analysis, we study the properties of the sample using three fundamental objects:
@@ -39,19 +44,22 @@ The Sample Mean $\overline{X}$, Sample Covariance Matrix $S$ and Sample Correlat
 \end{align}
 
 where $D^{-\frac{1}{2}}$ is the diagonal matrix with $D^{-\frac{1}{2}}_{ii}=\frac{1}{\sqrt{S_{ii}}}$
+
+$\square$
+
 ```
 
 
 Each of these objects has fundamental importance due to capturing different geometrical properties of the sample. 
 
-```{corollary, name="Geometrical Properties of the Sample"}
+```{proposition, name="Geometrical Properties of the Sample"}
 
 We start by considering the sample data matrix as p measurement vectors $Y_{i}$ in an n-dimensional space:
 
 $$\underset{(n \times p)}{X}=
 \begin{bmatrix}X_{11} & X_{12} & ...& X_{1p}\\X_{21} & X_{22} &... & X_{2p}\\....&....&....&....\\X_{11} & X_{12} &....&X_{np}\end{bmatrix}=\begin{bmatrix}\underset{(n \times 1)}{Y_{1}} & \underset{(n \times 1)}{Y_{2}} & ...& \underset{(n \times 1)}{Y_{p}}\end{bmatrix}$$
 
-We decompose each n-dimensional measurement into a component parallel and perpendicular to the unit vector, ie. $$Y_{i}=Y_{i} \bullet \frac{1}{\sqrt{n}}+d_{i}$$ where the deviance is defined as $d_{i}=Y_{i}-Y_{i} \bullet \frac{1}{\sqrt{n}}$ and $1=[1,1,..,1]^{´}$. 
+We decompose each n-dimensional measurement into a component parallel and perpendicular to the unit vector, ie. $$Y_{i}=(Y_{i} \bullet \frac{1}{\sqrt{n}})\frac{1}{\sqrt{n}}+d_{i}$$ where the deviance is defined as $d_{i}=Y_{i}-Y_{i} \bullet \frac{1}{\sqrt{n}}$ and $1=[1,1,..,1]^{´}$. 
 We can then make the following identifications,
 
 \begin{align}
@@ -62,11 +70,13 @@ R_{ij}&=\frac{d_{i} \bullet d_{j}}{\mid d_{i} \mid \mid d_{j} \mid}\\
 
 See Ref[] page 136 for further details.
 
+$\square$
+
 ```
 
 Similar to when dealing with univariate random variables, certain "regularities" govern the sampling distribution of $\overline{X}$ and $S$. (p.196). These results are repeated without proof below:
 
-```{lemma, name="Large Sample Properties of Sample Mean and Covariance"}
+```{proposition, name="Large Sample Properties of Sample Mean and Covariance"}
 Let $X_{1},X_{2},...,X_{n}$ be a random sample from a population with $E[X]=\mu$ and finitie, non-singular $Cov[X]=\Sigma$.
 
 As the number of measurements $n$ increases without bound and in any case $n \gg p$:
@@ -76,14 +86,16 @@ As the number of measurements $n$ increases without bound and in any case $n \gg
 
 S &\overset{Prob}{\longrightarrow} \Sigma \\
 
-sqrt(n)(\overline{X}-\mu) &\overset{Dist}{\longrightarrow} \mathcal{N}_{p}(\mu,\Sigma) \\
+\sqrt{n}(\overline{X}-\mu) &\overset{Dist}{\longrightarrow} \mathcal{N}_{p}(\mu,\Sigma) \\
 
 n(\overline{X}-\mu)^{´}S^{-1}(\overline{X}-\mu) &\overset{Dist}{\longrightarrow} \chi^2(p)
 
 \end{align}
+
+$\square$
 ```
 
-**Linear Predictors**
+## Linear Predictors
 
 In this document, I restrict my attention to "Linear Predictors" of the form shown below. It follows that my predicted response variable will vary continuously with the explanatory variables.
 
@@ -92,6 +104,8 @@ In this document, I restrict my attention to "Linear Predictors" of the form sho
 Let $\underset{(r \times 1)}{Z}$ denote a r-dimensional vector of Explanatory Random Variables, $\underset{(1 \times 1)}{Y}$ a univariate "response"" Random variable, $\overline{\underset{(1 \times 1)}{Y}}$ a Linear Predictor of $Y$, $b_{0}$ a constant and $\underset{(r \times 1)}{b_{Z}}$ a r-dimensional vector of constant co-efficients then:
 
 $$\overline{Y} =b_{0} + b_{Z}^{'}Z$$
+
+$\square$
 
 ```
 
@@ -117,6 +131,7 @@ We denote the linear predictor random variable $\overline{Y}$, and the predictio
 
 The objective of my linear prediction problem is to minimise the Mean Square Prediction Error (MSE) $$MSE=E(\epsilon)^2$$ by varying the values of parameters $b_{0}$ and $b_{Z}$.
 
+$\square$
 ```
 
 As will be shown later an equivalent objective function is to maximise the population multiple correlation coefficient.
@@ -135,6 +150,8 @@ $$\Sigma = \begin{bmatrix} \underset{(1 \times 1)}{\sigma_{YY}} \underset{(1 \ti
 We can define the Population Multiple Correlation Coefficient ($\rho_{Y(Z)}$):
 
 $$\rho_{Y(Z)} := \sqrt{\frac{(\sigma_{ZY}^{´}\sigma_{ZZ}^{-1}\sigma_{ZY})}{\sigma_{YY}}}$$
+
+$\square$
 ```
 
 **Understanding Best Linear Predictors**
@@ -143,13 +160,16 @@ The following theoretical arguments reinforce our understanding of the meaning o
 
 ```{definition, name="Cauchy Schwarz inequality"}
 Given two vectors $\underset{(p \times 1)}{b}$ and $\underset{(p \times 1)}{d}$, their scalar product is bounded from above $$(b^{´}d)^2 \leqslant (b^{´}b)(d^{´}d)$$
+
+$\square$
 ```
 
 ```{definition, name="Extended Cauchy Schwarz inequality"}
 The Extended Cauchy Schwarz inequality, with positive definite matrix $\underset{(p \times p)}{B}$, is $$(b^{´}d)^2 \leqslant (b^{´}Bb)(d^{´}B^{-1}d)$$
+$\square$
 ```
 
-```{lemma, name="Upper Bound on Correlation between Response Variable and Linear Predictor"}
+```{proposition, name="Upper Bound on Correlation between Response Variable and Linear Predictor"}
 
 If we set $d=\underset{(r \times 1)}{\sigma_{ZY}}$, $B=\underset{(r \times 1)}{\sigma_{ZZ}}$ and $b=b_{Z}$ in the extended Cauchy Schwarz Inequality, we obtain the bound $$(b_{Z}^{´}\sigma_{ZY})^2 \leqslant (b_{Z}^{´}\sigma_{ZZ}b_{Z})(\sigma_{ZY}^{´}\sigma_{ZZ}^{-1}\sigma_{ZY})$$.
 
@@ -157,11 +177,12 @@ Identifying $Cov(b_{0}+b_{Z}^{´}Z,Y)=Cov(b_{Z}^{´}Z,Y)=b_{Z}^{´}Cov(Z,Y)=b_{Z
 
 Or equivalently for the correlation $$[Corr(b_{0}+b_{Z}^{´}Z,Y)]^2 \leqslant \frac{(\sigma_{ZY}^{´}\sigma_{ZZ}^{-1}\sigma_{ZY})}{\sigma_{YY}}=\rho_{Y(Z)}^2$$
 
+$\square$
 ```
 
 To reinforce our understanding of the meaning of $\rho_{Y(Z)}$ and its connection with the MSE, lets establish matrix identities in terms of $\mu$ and $\Sigma$ for the best linear predictor of $Y$ given $Z$:
 
-```{lemma, name="Matrix identity for minimising the Mean Square Prediction Error"}
+```{proposition, name="Matrix identity for minimising the Mean Square Prediction Error"}
 
 
 The Mean Square Error can be decomposed as follows:
@@ -190,6 +211,7 @@ Whereby the minimal value of $MSE$ becomes:
 
 $$MSE_{MIN}=\sigma_{YY}-\sigma_{ZY}^{´}\sigma_{ZZ}\sigma_{ZY}$$
 
+$\square$
 ```
 
 The link with the Multiple Correlation Coefficient is established as follows:
@@ -209,16 +231,16 @@ This means that the Population Multiple Correlation Coefficient measures the "po
 $$MSE=\sigma_{YY}$$
 
 The linear predictor has explained none of the variation in the Response Variable.
-
+$\square$
 ```
 
 Furthermore: 
 
 
-```{lemma, name="Maximising Correlation between Response Variable and Linear Predictor"}
+```{proposition, name="Maximising Correlation between Response Variable and Linear Predictor"}
 
 The best linear predictor of $Y$ minimises the Mean Square Prediction Error and maximises the correlation coefficient with $Y$. In fact these two quantities are directly related.
 
 We see this by setting in the extended Cauchy Schwarz Inequality $$b_{Z}= \Sigma_{ZZ}^{-1}\sigma_{ZY}$$
-
+$\square$
 ```
