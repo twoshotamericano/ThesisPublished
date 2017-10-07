@@ -1,8 +1,10 @@
 # Multivariate Analysis {#Theory}
 
-##Key Elements of Multivariate Statistics
+The following sections on Multivariate Analysis are drawn from @johnson2014applied. The [Key Elements Section]{#Analysis1} below draws heavily from Chapters 2 and 3. 
 
-Multivariate statistics is concerned with the properties of multi-dimensional random vectors. We study the properties of the p-dimensional Random Vector $\underset{(p \times 1)}{Z}$, by capturing repeated measurements. For ease of study we arrange these n observations into an n by p data matrix:
+##Key Elements of Multivariate Statistics {#Analysis1}
+
+Multivariate statistics is concerned with the properties of multi-dimensional random vectors. We study the properties of the p-dimensional Random Vector $\underset{(p \times 1)}{Z}$, by capturing repeated measurements. For ease of study we arrange these n observations into an n by p data matrix (see @johnson2014applied, page 49):
 
 ```{definition, name="Data Matrix"}
 $$\underset{(n \times p)}{X}=\begin{bmatrix}\underset{(1 \times p)}{X_{1}^{'}}\\\underset{(1 \times p)}{X_{2}^{'}}\\....\\\underset{(1 \times p)}{X_{n}^{'}}\end{bmatrix}=
@@ -50,7 +52,7 @@ $\square$
 ```
 
 
-Each of these objects has fundamental importance due to capturing different geometrical properties of the sample. 
+Each of these objects has fundamental importance due to capturing different geometrical properties of the sample (see @johnson2014applied, Section 2.2, page 49). 
 
 ```{proposition, name="Geometrical Properties of the Sample"}
 
@@ -74,7 +76,7 @@ $\square$
 
 ```
 
-Similar to when dealing with univariate random variables, certain "regularities" govern the sampling distribution of $\overline{X}$ and $S$. (p.196). These results are repeated without proof below:
+Similar to when dealing with univariate random variables, certain "regularities" govern the sampling distribution of $\overline{X}$ and $S$ (see @johnson2014applied, page 175, section 4.5). These results are repeated without proof below:
 
 ```{proposition, name="Large Sample Properties of Sample Mean and Covariance"}
 Let $X_{1},X_{2},...,X_{n}$ be a random sample from a population with $E[X]=\mu$ and finitie, non-singular $Cov[X]=\Sigma$.
@@ -95,6 +97,9 @@ n(\overline{X}-\mu)^{´}S^{-1}(\overline{X}-\mu) &\overset{Dist}{\longrightarrow
 $\square$
 ```
 
+Since in the limit of large sample sizes the  sampling distribution of $\overline{X}$ is (multivariate) normally distributed, we can apply statistical results developed for Multivariate Normal Random Vectors. For Example, the Multivariate Analysis of Variance Model for comparing g Population Mean Vectors (see @johnson2014applied, chapter 6, page 301, chapter 6)
+
+
 ## Linear Predictors
 
 In this document, I restrict my attention to "Linear Predictors" of the form shown below. It follows that my predicted response variable will vary continuously with the explanatory variables.
@@ -110,16 +115,16 @@ $\square$
 ```
 
 
-If I can transform my data so that it appears to be multivariate normally distributed, then the best predictor will actually be linear in the explanatory variables.(p425). Therefore this restriction is not significant in this scenario. In any case, linear models have the non-technical advantage of being easier to interpret and manipulate. We can use them to better understand our data before moving to more advanced techniques! We can measure their explanatory power by calculating the mean square prediction error and the multiple correlation coefficient (see below)
+If I can transform my data so that it appears to be multivariate normally distributed, then the best predictor will actually be linear in the explanatory variables (see @johnson2014applied, page 404). Therefore this restriction is not significant in this scenario. In any case, linear models have the non-technical advantage of being easier to interpret and manipulate. We can use them to better understand our data before moving to more advanced techniques! We can measure their explanatory power by calculating the mean square prediction error and the multiple correlation coefficient (see below)
 
 
 **Best Linear Predictors**
 
-In keeping with the approach to Multivariate Analysis in [], I will measure the accuracy of my linear prediction models using a mean square error criterion. That is, the technically best prediction model will have the lowest value for the Mean Square Prediction Error.
+In keeping with the approach to Multivariate Analysis in @johnson2014applied, I will measure the accuracy of my linear prediction models using a mean square error criterion. That is, the technically best prediction model will have the lowest value for the Mean Square Prediction Error.
 
 I can now define my prediction problem as follows:
 
-```{definition, name="Prediction Problem"}
+```{definition, MSE, name="Prediction Problem"}
 Let $Y$,$Z_{1}$,$Z_{2}$,...,$Z_{r}$ represent univariate random variables respectively. We assume these variables are generated from a joint distribution with population mean $\underset{(r+1) \times 1}{\mu}$ and population covariance matrix $\underset{(r+1) \times (r+1)}{\Sigma}$ which we assume to have full rank. 
 
 We denote the linear predictor random variable $\overline{Y}$, and the prediction error random variable $\epsilon$. We define these quantities as follows:
@@ -156,7 +161,7 @@ $\square$
 
 **Understanding Best Linear Predictors**
 
-The following theoretical arguments reinforce our understanding of the meaning of $\rho_{Y(Z)}$. They establish $\rho_{Y(Z)}^2$ as an upper limit on the correlation between Y and its linear predictor $\overline{Y}$. They establish the interpretion of $\rho_{Y(Z)}^2$ as the power of the best linear estimator to explain the variation of Y. They establish that the best linear predictor has maximum correlation with Y ie. $\rho_{Y(Z)}^2$.
+The following theoretical arguments reinforce our understanding of the meaning of $\rho_{Y(Z)}$. They establish $\rho_{Y(Z)}^2$ as an upper limit on the correlation between Y and its linear predictor $\overline{Y}$. They establish the interpretion of $\rho_{Y(Z)}^2$ as the power of the best linear estimator to explain the variation of Y. They establish that the best linear predictor has maximum correlation with Y ie. $\rho_{Y(Z)}^2$. (For proofs see @johnson2014applied, Section 7.8, page 401)
 
 ```{definition, name="Cauchy Schwarz inequality"}
 Given two vectors $\underset{(p \times 1)}{b}$ and $\underset{(p \times 1)}{d}$, their scalar product is bounded from above $$(b^{´}d)^2 \leqslant (b^{´}b)(d^{´}d)$$

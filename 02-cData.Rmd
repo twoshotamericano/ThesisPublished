@@ -1,0 +1,84 @@
+# (PART) Data {-}
+
+# Data Description {#Data}
+
+**Original Data**
+
+The data contains property sales prices for transactions between May 2014 and May 2015 in King County USA which includes Seattle. I downloaded it from the website @kaggle1. For each of $21613$ properties, we are given the following data fields.The original data can be found here [Source Data](ThesisPublished/Analysis/Data/kc_house_data.csv).
+
+|Field Name                    | Data Description                                          |
+|------------------------------|:---------------------------------------------------------:|
+|ID                            | Unique Property Identifier                                |
+|Date                          | Date of Sale                                              |
+|Price                         | Property Sale Price in USD                                |
+|Bedrooms                      | Number of Bedrooms  |
+|Bathrooms                     | Number of Bathrooms |
+|sqft_living                   | Size of the Living Space in square feet |
+|sqft_lot                      | Size of the garden in square feet  |
+|floors                        | Number of Floors in Property |
+|waterfront                    | 1=Waterfront View, 0=No Waterfront View |
+|view                          | 1=General View, 0= no General View    |
+|condition                     | Property Condition, 1=Poor Condition 5= Excellent Condition|
+|grade                         | Property Condition, 1=Poor, 13= Excellent       |
+|sqft_above                    | Size of Upstairs Floors  in square feet   |
+|sqft_basement                 | Size of Basement in square feet     |
+|yr_built                      | Construction Year      |
+|yr_renovated                  | Year Property Renovated        |
+|zipcode                       | Postal Code      |
+|lat                           | Property Latitute        |
+|long                          | Property Longitude |
+
+
+
+**Literature Review**
+
+The original data set only included information on the intrinsic characeteristics of a property. For example there were no variables pertaining to the neighbourhood of a property nor to macroeconomic conditions (eg. the state of the mortgage market, unemployment levels,National and local government policies, demographics etc).
+
+Using only the original data could result in biased parameter estimates or the significance level of a variable being overstated. For example, the data comes from the period from May 2014 to May 2015 when the external environment in the US was relatively stable. This means that the level of noise in the data could be artificially low and the explanatory power of micro variables such as bedroom number overstated.
+
+To mitigate this risk I performed an online literature search and identified variables which previous research studies found to be significant predictors of property price. The table below shows the variables identified online, the reference article and the matching field in the database. Article 1 is [@galati2011macro], Article 2 is [@candas2015], Website 1 is [@rightmove]
+
+|Micro-variable         | Reference | Original Data-Set Field  |
+|-----------------------|:---------:|--------------------------|
+|Year of Construction   | Article 1 |Construction Year         |
+|Size of Living Room    | Article 1 |Living Space              |
+|Presence of Garage     | Article 1 |                          |
+|Presence of Garden     | Article 1 |Lot Size                  |
+|Type of House          | Article 1 |Number of Floors          |
+|Large City vs not large| Article 1 |Seattle ZipCode           |
+|Degree of Urbanization | Article 1 |                          |
+|Floor No               | Article 2 |Floors                    |
+|Heating System         | Article 2 |Renovation Year           |
+|Earthquake Zone        | Article 2 |Not relevant              |
+|Rental Value           | Article 2 |                          |
+|Land Value             | Article 2 |                          |
+|Parcel Area            | Article 2 |Total Area                |
+|Zoning                 | Article 2 |Zipcode                   |
+|Proximity to Amenities | Website 1 |                          |
+|Number of Bedrooms     | Website 1 |Bedrooms                  |
+|Number of Bathrooms    | Website 1 |Bathrooms                 |
+|Condition of Interior  | Website 1 |Condition/Grade           |
+
+**Data Enrichment**
+
+The original data is missing a number of fields which the literature search flagged as important. In particular Proximity to Amenities, Rental Value, Zoning (ie urban or rural). Correspondingly I wrote custom R functions to loop through the 21000 properties in the data-set and retrieve additional fields from online data providers. Conducting significant volumes of "API calls" for free is a fiddly computational exercise. The code needs to handle error messages and parse results automatically. Furthemore, data providers typically place free usage limits of 1000 API calls per day and this needs to be circumvented.
+
+Before starting with data-enrichment I needed to reverse geocode my data. This was due to the original data-set not including the full address, only a postcode. I used the Google Maps API service to do this. Having gotten the full address for each property, I used two data-services for enrichment. I used the Google Radar Search API to return places of interest near each property and I used Zillow (a large U.S. Real Estate Website) to obtain rental values.My R code can be found [here](ThesisPublished/Analysis/UsefulFunctions.R). 
+
+The results from API calls to servers are typically in a hierarchical XML format and need to be tidied before they can be analysed.  Following this tidying process, I was able to add the following additional fields to each property (the enriched data set is found [online](ThesisPublished/Analysis/Data/EnrichedData)):
+
+|Micro-variable                   | Source | Description                                            |
+|---------------------------------|:------:|--------------------------------------------------------|
+|Restaurants250m                  | Google |Number of Restaurants within 250m                       |
+|Schools1000m                     | Google |Number of Schools within 1000m                          |
+|PoliceStation1000m               | Google |Number of Police Stations within 1000m                  |
+|SuperMarketGrocery750m           | Google |Number of Supermarkets or Grocery Stores within 750m    |
+|Library750m                      | Google |Number of Libraries within 750m                         |
+|LiquourStore250m                 | Google |Number of Liquour Stores within 250m                    |
+|DoctorDentist250m                | Google |Number of Doctor or Dentists within 250m                |
+|DepartmentStoreShoppingMall750m  | Google |Number of Department Stores or Shopping Malls with 750m |
+|BusTrainTransitStation100m       | Google |Number of Bus or Transit Stations within 100m           |
+|BarNightclubMovie500m            | Google |Number of Bars, Nightclubs or Movie Theatres within 500m|
+|Seattle Flag                     | Google |1=Zipcode belongs to City of Seattle                    |
+|RZEstimateAmount                 | Zillow |Monthly Rental Charge for the Property                  |
+
