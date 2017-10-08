@@ -146,7 +146,7 @@ ReverseGeo<-function(Input1,Input2,Input3){
 
 Zillowf<-function(property) {
 
-  #Create a local variable to strore the search results
+  #Create a local variable to store the search results
   Output<-list(zpid=character(999),
                AddressStreet=character(999),
                AddressZipCode=character(999),

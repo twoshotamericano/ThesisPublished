@@ -1,71 +1,84 @@
 # (PART) Data {-}
 
-# Data Description {#Data}
+# Data {#Data}
+
+## Data Sources
+
+I am interested in applying multivariate analysis to understand the factors affecting property prices. To do this, I sourced  a property data-set from the website @kaggle1 . The original data-set contained sale prices and property details for 21613 residential property sales between May 2014 and May 2015 in King County USA (includes Seattle).
+
+To discover which variables, not included in the data-set, are known to influence property prices I conducted a literature search. To fill these gaps, I performed significant data enrichment.This involved writing custom R code to extract data from online data providers. For local area information, I identified the Google Maps and Google Radar Search API services. For financial information such as rental values, I identified the data services of the Seattle based real estate and rental marketplace [Zillow](https://www.zillow.com/corp/About.htm).  
 
 **Original Data**
 
-The data contains property sales prices for transactions between May 2014 and May 2015 in King County USA which includes Seattle. I downloaded it from the website @kaggle1. For each of $21613$ properties, we are given the following data fields.The original data can be found here [Source Data](ThesisPublished/Analysis/Data/kc_house_data.csv).
+The original data can be found on my GitHub site ([Source Data](ThesisPublished/Analysis/Data/kc_house_data.csv)). The data comprises a table with 21613 rows (one per property sale) and 19 columns of explanatory variables. Descriptions of each data column is shown below. The fields containing categorical data as opposed to numeric (discrete or continuous) are also identified. The absence of information for a particular property, in a particular field was encoded with a blank.
 
-|Field Name                    | Data Description                                          |
-|------------------------------|:---------------------------------------------------------:|
-|ID                            | Unique Property Identifier                                |
-|Date                          | Date of Sale                                              |
-|Price                         | Property Sale Price in USD                                |
-|Bedrooms                      | Number of Bedrooms  |
-|Bathrooms                     | Number of Bathrooms |
-|sqft_living                   | Size of the Living Space in square feet |
-|sqft_lot                      | Size of the garden in square feet  |
-|floors                        | Number of Floors in Property |
-|waterfront                    | 1=Waterfront View, 0=No Waterfront View |
-|view                          | 1=General View, 0= no General View    |
-|condition                     | Property Condition, 1=Poor Condition 5= Excellent Condition|
-|grade                         | Property Condition, 1=Poor, 13= Excellent       |
-|sqft_above                    | Size of Upstairs Floors  in square feet   |
-|sqft_basement                 | Size of Basement in square feet     |
-|yr_built                      | Construction Year      |
-|yr_renovated                  | Year Property Renovated        |
-|zipcode                       | Postal Code      |
-|lat                           | Property Latitute        |
-|long                          | Property Longitude |
+|Field Name   |  Data Type       | Data Description                                          |
+|-------------|------------------|-----------------------------------------------------------|
+|ID           |Continuous Numeric| Unique Property Identifier                                |
+|Date         |Continuous Numeric| Date of Sale                                              |
+|Price        |Continuous Numeric| Property Sale Price in USD                                |
+|Bedrooms     |Dicrete Numeric   | Number of Bedrooms                                        |
+|Bathrooms    |Dicrete Numeric   | Number of Bathrooms                                       |
+|sqft_living  |Continuous Numeric| Size of the Living Space in square feet                   |
+|sqft_lot     |Continuous Numeric| Size of the garden in square feet                         |
+|floors       |Dicrete Numeric   | Number of Floors in Property                              |
+|waterfront   |Categoric         | 1=Waterfront View, 0=No Waterfront View                   |
+|view         |Categoric         | 1=General View, 0= no General View                        |
+|condition    |Categoric         | Property Condition (1=Poor Condition 5= Excellent Condition)|
+|grade        |Categoric         | Property Condition (1=Poor, 13= Excellent)                 |
+|sqft_above   |Continuous Numeric| Size of Upstairs Floors  in square feet                   |
+|sqft_basement|Continuous Numeric| Size of Basement in square feet                           |
+|yr_built     |Continuous Numeric| Construction Year                                         |
+|yr_renovated |Continuous Numeric| Year Property Renovated                                   |
+|zipcode      |Categoric         | Postal Code                                               |
+|lat          |Continuous Numeric| Property Latitute                                         |
+|long         |Continuous Numeric| Property Longitude                                        |
 
-
-
-**Literature Review**
+**Literature Review Results**
 
 The original data set only included information on the intrinsic characeteristics of a property. For example there were no variables pertaining to the neighbourhood of a property nor to macroeconomic conditions (eg. the state of the mortgage market, unemployment levels,National and local government policies, demographics etc).
 
 Using only the original data could result in biased parameter estimates or the significance level of a variable being overstated. For example, the data comes from the period from May 2014 to May 2015 when the external environment in the US was relatively stable. This means that the level of noise in the data could be artificially low and the explanatory power of micro variables such as bedroom number overstated.
 
-To mitigate this risk I performed an online literature search and identified variables which previous research studies found to be significant predictors of property price. The table below shows the variables identified online, the reference article and the matching field in the database. Article 1 is [@galati2011macro], Article 2 is [@candas2015], Website 1 is [@rightmove]
+An online literature search helped to mitigate this risk and identified variables which previous research studies found to be significant predictors of property price. The table below shows the variables identified, the reference article and the matching field in the database. Article 1 is [@galati2011macro], Article 2 is [@candas2015], Website 1 is [@rightmove]
 
 |Micro-variable         | Reference | Original Data-Set Field  |
 |-----------------------|:---------:|--------------------------|
 |Year of Construction   | Article 1 |Construction Year         |
 |Size of Living Room    | Article 1 |Living Space              |
-|Presence of Garage     | Article 1 |                          |
+|Presence of Garage     | Article 1 |Missing                   |
 |Presence of Garden     | Article 1 |Lot Size                  |
 |Type of House          | Article 1 |Number of Floors          |
-|Large City vs not large| Article 1 |Seattle ZipCode           |
-|Degree of Urbanization | Article 1 |                          |
+|Large City vs not large| Article 1 |Missing                   |
+|Degree of Urbanization | Article 1 |Missing                   |
 |Floor No               | Article 2 |Floors                    |
 |Heating System         | Article 2 |Renovation Year           |
 |Earthquake Zone        | Article 2 |Not relevant              |
-|Rental Value           | Article 2 |                          |
-|Land Value             | Article 2 |                          |
+|Rental Value           | Article 2 |Missing                   |
+|Land Value             | Article 2 |Missing                   |
 |Parcel Area            | Article 2 |Total Area                |
 |Zoning                 | Article 2 |Zipcode                   |
-|Proximity to Amenities | Website 1 |                          |
+|Proximity to Amenities | Website 1 |Missing                   |
 |Number of Bedrooms     | Website 1 |Bedrooms                  |
 |Number of Bathrooms    | Website 1 |Bathrooms                 |
 |Condition of Interior  | Website 1 |Condition/Grade           |
 
-**Data Enrichment**
+##Data Enrichment
 
-The original data is missing a number of fields which the literature search flagged as important. In particular Proximity to Amenities, Rental Value, Zoning (ie urban or rural). Correspondingly I wrote custom R functions to loop through the 21000 properties in the data-set and retrieve additional fields from online data providers. Conducting significant volumes of "API calls" for free is a fiddly computational exercise. The code needs to handle error messages and parse results automatically. Furthemore, data providers typically place free usage limits of 1000 API calls per day and this needs to be circumvented.
+The original data is missing a number of fields which the literature search flagged as important. In particular Proximity to Amenities, Rental Value, Large City vs not large. Some of these could simply be calculated from the original data. For example, since Seattle was the only large city in King County, "Large City vs Not Large" can be calculated using the zipcode data field and a list of Seattle zipcodes. 
 
-Before starting with data-enrichment I needed to reverse geocode my data. This was due to the original data-set not including the full address, only a postcode. I used the Google Maps API service to do this. Having gotten the full address for each property, I used two data-services for enrichment. I used the Google Radar Search API to return places of interest near each property and I used Zillow (a large U.S. Real Estate Website) to obtain rental values.My R code can be found [here](ThesisPublished/Analysis/UsefulFunctions.R). 
+Many of the missing data fields could not be calculated from the original data. Correspondingly I wrote custom R functions to retrieve additional fields from online data providers. Conducting significant volumes of "API calls" for free is a fiddly computational exercise. The code needs to handle error messages and parse results automatically. Furthemore, data providers typically place free usage limits of 1000 API calls per day and this needed to be circumvented to enrich my 21613 records!
 
-The results from API calls to servers are typically in a hierarchical XML format and need to be tidied before they can be analysed.  Following this tidying process, I was able to add the following additional fields to each property (the enriched data set is found [online](ThesisPublished/Analysis/Data/EnrichedData)):
+The first step to using an API data-service is to obtain an Access Token from the data service. This can only be done manually by visiting the developer pages of the service's website and supplying user details (eg. email address). Access Tokens typically do not expire but do have usage limits of 1000 calls per day. By supplying Credit Card details to verify my identity I was able to increase my daily limit on Google to 50000 calls.
+
+REVERSE GEOCODING
+
+Each data-service requires a particular set of input information to be supplied to the server in a specified format. Unfortunately Zillow required the full property address as an input and this was not contained in the original data. Therefore before starting with data-enrichment I wrote the ReverseGeo function to reverse geocode my data (see end of page). Using this function, I looped through the 21613 records and by suppling latitute and longitude information, I obtained the full address details. To check that this process completed without error, I identified 10 properties randomly in the data and checked on google maps that the same building was identified using first lat/long information and then full address.
+
+RADAR SEARCH
+
+Having gotten the full address for each property, I used the Google Radar Search API to return places of interest near each property. Unfortunately to obtain the 10 data fields below, I had to loop through the entire data set over 10 times (once per data field). This exceeded my daily usage limit and I needed to create multiple access tokens to circumvent any access  Again, to check that this process completed without error, I identified 10 properties randomly in the data and checked on google maps that their neighbourhood contained the places of interest identified by the Radar API.
+
 
 |Micro-variable                   | Source | Description                                            |
 |---------------------------------|:------:|--------------------------------------------------------|
@@ -79,6 +92,270 @@ The results from API calls to servers are typically in a hierarchical XML format
 |DepartmentStoreShoppingMall750m  | Google |Number of Department Stores or Shopping Malls with 750m |
 |BusTrainTransitStation100m       | Google |Number of Bus or Transit Stations within 100m           |
 |BarNightclubMovie500m            | Google |Number of Bars, Nightclubs or Movie Theatres within 500m|
-|Seattle Flag                     | Google |1=Zipcode belongs to City of Seattle                    |
-|RZEstimateAmount                 | Zillow |Monthly Rental Charge for the Property                  |
 
+ZILLOW SEARCH
+
+Finally, I used the Zillow API to obtain information on the rental value of properties. The results from API calls to Zillow were in a hierarchical XML format and needed to be tidied significantly before they could be analysed. Occasionally the XML format of the result set changed and I needed to write the function in figure \@ref(fig:ZillowSearch) to automate result retrieval. Using this tidying function, I was able to add the following fields to each property in the data-set:
+
+|Micro-variable                   | Source | Description                                            |
+|---------------------------------|:------:|--------------------------------------------------------|
+|RZEstimateAmount                 | Zillow |Monthly Rental Charge Estimatefor the Property          |
+
+
+RESULTS 
+
+The enriched data set is found [online](ThesisPublished/Analysis/Data/EnrichedData).
+
+## Code
+
+The Reverse Geocode function is shown below:
+
+```{r RevGeoCode, eval=FALSE,fig.cap="Obtaining Address information"}
+
+library(httr)
+
+#Input1 is the row in the data-set we want to reverse geocode
+#Input2 is the original data-set
+#Input3 is the API access key
+
+ReverseGeo<-function(Input1,Input2,Input3){
+
+
+  #initialise some variables
+  j<-c(0)
+  k<-c(0)
+  LatLng<-c(0)
+  KeyVal<-c(0)
+  Output<-c(0)
+  Output2<-rep(NA,each=7)
+
+  #Put the inputs into dummy variables
+  j<-Input1
+  LatLng<-paste(Input2[j,2],",",Input2[j,3],sep="")
+  KeyVal<-Input3
+
+  #Use HTTR to query google and store the results
+  sample2<-GET("https://maps.googleapis.com/maps/api/geocode/json",
+               query=list(latlng=LatLng,
+                          key=KeyVal))
+
+  #Parse the results using httr
+  Output<-content(sample2)
+
+  #Parse the response again
+  #Ensures the information is placed in the correct order
+
+  for (k in 1:(min(7,length(Output$results[[1]]$address_components))))
+
+    {
+
+      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="street_number")
+          {Output2[1]<-strsplit(
+                          Output$results[[1]]$address_components[[k]]$long_name,
+                          "-")[[1]][1]}
+
+      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="route")
+          {Output2[2]<-Output$results[[1]]$address_components[[k]]$long_name}
+
+      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="locality")
+          {Output2[3]<-Output$results[[1]]$address_components[[k]]$long_name}
+
+      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="administrative_area_level_2")
+          {Output2[4]<-Output$results[[1]]$address_components[[k]]$long_name}
+
+      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="administrative_area_level_1")
+          {Output2[5]<-Output$results[[1]]$address_components[[k]]$long_name}
+
+      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="country")
+          {Output2[6]<-Output$results[[1]]$address_components[[k]]$long_name}
+
+      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="postal_code")
+          {Output2[7]<-Output$results[[1]]$address_components[[k]]$long_name}
+  }
+
+  #Return the parsed address details
+  Output2
+
+}
+
+```
+
+The Radar Search function is shown below:
+
+```{r, eval=FALSE,fig.cap="Obtaining Neighbourhood Information using Radar Search"}
+#################
+# Created by: Ed Anderson
+# Date: 09/04/2017
+##################
+
+# Radar Search With Google API
+# Function contacts the Google API and returns local area information
+# Example Query:
+#
+# RadarSearch(1,data2[,c("Lat","Long")],100,"AIzaSyC5dvHAt1QbcWtdIaDWHnLLUaAARJSSSPs","School")
+#
+# A key value needs to be obtained from here:
+# Here is my key "AIzaSyC5dvHAt1QbcWtdIaDWHnLLUaAARJSSSPs"
+# https://developers.google.com/maps/documentation/geocoding/get-api-key
+
+## Load Packages
+
+library(httr)
+
+#Input1 is an integer value, it identifies the row in the data-frame
+#Input2 is a data-frame, it contains the lat-long information of the properties
+#Input3 is a numeric value. It is used for the radius of the search
+#Input4 is the Google API key
+#Input5 is the Place of Interest (eg. Restaurants)
+
+RadarSearch<-function(Input1,Input2,Input3,Input4,Input5){
+
+  #Declare some variables
+  i<-c(0)
+  LatLon<-c(0)
+  Radius<-c(0)
+  Type<-c(0)
+  Key<-c(0)
+
+  #Populate the variables
+  i<-Input1
+  LatLong<-paste(Input2[i,1],",",Input2[i,2],sep="")
+  Radius<- paste(Input3)
+  Type<- Input5
+  Key<-Input4
+
+
+  #Build an API query and store the results
+  sample2<-GET("https://maps.googleapis.com/maps/api/place/nearbysearch/json",
+               query=list(location=LatLong,
+                          radius=Radius,
+                          #type=typ,
+                          types=Type,
+                          #keyword=keyw,
+                          key=Key))
+
+  #Output the number of successful search results
+  length(content(sample2)$results)
+
+}
+
+
+######################################
+
+
+```
+
+The Zillow Rental Estimate function is shown below:
+
+```{r, eval=FALSE}
+
+Zillowf<-function(property) {
+
+  #Create a local variable to store the search results
+  Output<-list(zpid=character(999),
+               AddressStreet=character(999),
+               AddressZipCode=character(999),
+               AddressCity=character(999),
+               AddressState=character(999),
+               AddressLatitude=character(999),
+               AddressLongitude=character(999),
+               UseCode=as.character(999),
+               YearBuilt=as.character(999),
+               LotSizeSqFt=as.character(999),
+               FinishedSizeSqFt=as.character(999),
+               BathroomNo=as.character(999),
+               BedroomNo=as.character(999),
+               #LastSoldDate=character(999),
+               #LastSoldPrice=character(999),
+               ZestimateAmount=as.character(999),
+               ZestimateLastUpdated=as.character(999),
+               ZestimateOneWeekChange=as.character(999),
+               ZestimateValueChange=as.character(999),
+               ZestimateValueChangeDuration=as.character(999),
+               ZestimateLowValueRange=as.character(999),
+               ZestimateHighValueRange=as.character(999),
+               ZestimateValuePercentile=as.character(999),
+               RZestimateAmount=as.character(999),
+               RZestimateLastUpdated=as.character(999),
+               RZestimateOneWeekChange=as.character(999),
+               RZestimateValueChange=as.character(999),
+               RZestimateValueChangeDuration=as.character(999),
+               RZestimateLowValueRange=as.character(999),
+               RZestimateHighValueRange=as.character(999),
+               RegionIndexValue=as.character(999),
+               RegionAttributeName=as.character(999),
+               RegionAttributeNeighbourhood=as.character(999),
+               RegionAttributeID=as.character(999))
+
+  # Loop through the list of results and place the data in appropriate place
+
+  for (k in 1:length(row.names(property))){
+
+    if (row.names(property)[k]=="zpid")
+    {Output$zpid=property[[k]]}
+
+    else if (row.names(property)[k]=="address")
+    {Output$AddressStreet=property[[k]]$street
+    Output$AddressZipCode=property[[k]]$zipcode
+    Output$AddressCity=property[[k]]$city
+    Output$AddressState=property[[k]]$state
+    Output$AddressLatitude=property[[k]]$latitude
+    Output$AddressLongitude=property[[k]]$longitude}
+
+    else if (row.names(property)[k]=="useCode")
+    {
+      Output$UseCode=property[[k]]
+    }
+
+    else if (row.names(property)[k]=="finishedSqFt")
+    {
+      Output$FinishedSizeSqFt=property[[k]]
+    }
+    else if (row.names(property)[k]=="bathrooms")
+    {
+      Output$BathroomNo=property[[k]]
+    }
+    else if (row.names(property)[k]=="bedrooms")
+    {
+      Output$BedroomNo=property[[k]]
+    }
+
+    else if (row.names(property)[k]=="zestimate")
+    {
+
+      if(length(property[[k]]$amount)!=1){Output$ZestimateAmount=property[[k]]$amount$text} else {Output$ZestimateAmount="999"}
+      Output$ZestimateLastUpdated=property[[k]]$`last-updated`
+      Output$ZestimateOneWeekChange=property[[k]]$oneWeekChange[[1]]
+      if(!is.null(property[[k]]$valueChange$text)) {Output$ZestimateValueChange=property[[k]]$valueChange$text}
+      if (!is.null(property[[k]]$valueChange$.attrs[[1]])) {Output$ZestimateValueChangeDuration=property[[k]]$valueChange$.attrs[[1]]}
+      Output$ZestimateLowValueRange=property[[k]]$valuationRange[[1]]
+      if (length(property[[k]]$valuationRange)>2) {Output$ZestimateHighValueRange=property[[k]]$valuationRange[[3]]} else {Output$ZestimateHighValueRange="999"}
+      Output$ZestimateValuePercentile=property[[k]]$percentile[[1]]
+    }
+    else if (row.names(property)[k]=="rentzestimate")
+    {
+      Output$RZestimateAmount=property[[k]]$amount$text
+      Output$RZestimateLastUpdated=property[[k]]$`last-updated`
+      Output$RZestimateOneWeekChange=property[[k]]$oneWeekChange[[1]]
+      Output$RZestimateValueChange=property[[k]]$valueChange$text
+      Output$RZestimateValueChangeDuration=property[[k]]$valueChange$.attrs[[1]]
+      Output$RZestimateLowValueRange=property[[k]]$valuationRange[[1]]
+      Output$RZestimateHighValueRange=property[[k]]$valuationRange[[3]]
+    }
+
+    else if (row.names(property)[k]=="localRealEstate")
+    {
+      Output$RegionIndexValue="999" #property[[k]][[1]]
+      Output$RegionAttributeName="999" #property[[k]][[3]][[1]]
+      Output$RegionAttributeNeighbourhood="999" #property[[k]][[3]][[3]]
+      Output$RegionAttributeID="999" #property[[k]][[3]][[2]]
+    }
+
+  }
+
+  Output
+
+
+
+}
+```

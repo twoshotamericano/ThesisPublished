@@ -117,11 +117,6 @@ print.xtable(table2,caption.placement="bottom")
 
 We can use visualisations to help identify outliers. For example, in Figures \@ref(fig:Outliers1) we see that there exists a group of properties with very high values. We need to transform the reponse variable in order to achieve a satisfactory model fit. The results of a log transform are shown in  \@ref(fig:Outliers2).
 
-(ref:Outliers1) Checking for Outliers.
-
-```{r Outliers1,echo=FALSE, fig.cap='(ref:Outliers1)',fig.align='center'}
-knitr::include_graphics("Analysis/Images/Visualization1.png")
-```
 
 (ref:Outliers1) Adjusting for Outliers.
 
@@ -141,28 +136,8 @@ knitr::include_graphics("Analysis/Images/Visualisation3.jpg")
 
 **Visualisations**
 
-It is so easy to create plots in R that you can go wild. In figures \@ref(fig:DataExploration1) and \@ref(fig:DataExploration2), I do exactly this.
+It is so easy to create plots in R that you can go wild. 
 
-(ref:DataExploration1) Revisiting the Data.
-
-```{r DataExploration1,echo=FALSE, fig.cap='(ref:DataExploration1)',fig.align='center'}
-knitr::include_graphics("Analysis/Images/Exploratory1.jpg")
-
-knitr::include_graphics("Analysis/Images/Exploratory2.jpg")
-
-knitr::include_graphics("Analysis/Images/Exploratory3.jpg")
-
-knitr::include_graphics("Analysis/Images/Exploratory4.jpg")
-
-knitr::include_graphics("Analysis/Images/Exploratory5.jpg")
-
-knitr::include_graphics("Analysis/Images/Exploratory6.jpg")
-
-```
-
-```{r DataExploration2,echo=FALSE, fig.cap='(ref:DataExploration1)',fig.align='center',out.width='40%'}
-knitr::include_graphics("Analysis/Images/Exploratory7.jpg")
-```
 
 **Statistics**
 
