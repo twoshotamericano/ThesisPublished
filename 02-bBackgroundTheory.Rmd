@@ -1,6 +1,6 @@
 # Multivariate Statistical Models {#Models}
 
-The following sections on Multivariate Models are drawn from @johnson2014applied. The proofs for results stated in the [Linear Regression Section]{#LinReg} are found in Chapter 7 and the proofs for the [Principal Component Section]{#PCA} are found in Chapters 8 & 8A. 
+The following sections on Multivariate Models are drawn from @johnson2014applied. The proofs for results stated in the [Linear Regression Section](#LinReg) are found in Chapter 7, the proofs for the [Principal Component Section](#PCA) are found in Chapters 8 & 8A, those for the [Canonical Correlation Analysis](#Canonical) in Chapter 10, those for [Factor Analyis](#Factor) in Chapter 9. 
 
 **Estimating Best Linear Predictors**
 
@@ -110,7 +110,7 @@ The following analytical result for OLS estimates can be derived (see @johnson20
  ```{proposition, OLSReg, name="OLS Estimates of Linear Regression Model"}
 
 The r+1 dimensional vector of sample estimates for the parameter values $\beta=[\beta_{0},\beta_{1},..,\beta_{r}]$ are denoted 
-$\widehat{\beta}=[b_{0},b_{1},..,b_{r}]$. The OLS estiamtes of $\widehat{\beta}$ are (for proof see []):
+$\widehat{\beta}=[b_{0},b_{1},..,b_{r}]$. The OLS estiamtes of $\widehat{\beta}$:
 
 $$\widehat{\beta}=(Z^´Z)^{-1}Z^´y$$
 
@@ -129,11 +129,11 @@ $\square$
 
 
 
-The ability of the best linear predictor to explain variations in the response vector is estimated using the Coefficient of Determination ($=\rho_{Y(Z)}^2$). (For proof see @johnson2014applied, page 367, eqn. 7.9)
+The ability of the best linear predictor to explain variations in the response vector is estimated using the Coefficient of Determination ($=\rho_{Y(Z)}^2$ see def. \@ref(def:rho) ). (For proof see @johnson2014applied, page 367, eqn. 7.9)
 
  ```{proposition, name="Measuring the Performance of Best Estimator"}
 
-The orthogonality of $\widehat{\epsilon}$ and $\widehat{y}$ under OLS fitting allows the decomposition (for proof see []):
+The orthogonality of $\widehat{\epsilon}$ and $\widehat{y}$ under OLS fitting allows the decomposition:
 
 \begin{align}
 \sum_{i=1}^{n}(y_{i}-\overline{y})^2 &= \sum_{i=1}^{n}(\widehat{y_{i}}-\overline{y})^2 + \sum_{i=1}^{n}(y_{i}-\widehat{y_{i}})^2 \\
@@ -157,7 +157,7 @@ If the model assumptions in definition \@ref(def:LinReg) are valid then the Samp
 
  ```{proposition, OLSSampling, name="Sampling Properties of OLS Estimates"}
 
-The parameter estimates $\widehat{\beta}$ have the follow properties. For proof see []:
+The parameter estimates $\widehat{\beta}$ have the follow properties:
 
 \begin{align}
 E[\widehat{\beta}] &= \beta \\
@@ -222,7 +222,7 @@ $$\sum_{j=1}^{n}(x_{j}-\overline{x}-a_{j})^´(x_{j}-\overline{x}-a_{j})=
 
 $\square$
 ```
-Using linear algebra (proof not shown) we obtain the minimisation result in Proposition \@ref(prp:MESS) for the error sum of squares (see @johnson2014applied, page 467, Result 8A.1):
+Using linear algebra we obtain the minimisation result in Proposition \@ref(prp:MESS) for the error sum of squares (see @johnson2014applied, page 467, Result 8A.1):
 
 ```{proposition, MESS, name="Minimisation of Error Sum of Squares"}
 Let $\underset{(n \times p)}{A}$ be any matrix with $rank(A) \leq r < min(p,n)$. Let $\underset{(p \times r)}{E_{r}}$ be the matrix formed by the first r eigenvectors of $S$, ie. $\widehat{E_{r}}=[\widehat{e_{1}},\widehat{e_{2}},...,\widehat{e_{r}}]$. The error of approximation sum of squares is minimised by the selection:
@@ -252,7 +252,7 @@ $\square$
 ```
 
 
-In applied PCA we examine how many principal components must be added to explain a majority of the variation in the data. The algebraic solution for the minimum value of the sum of square errors motivates in Proposition \@ref(prp:MESS) the following definition for measuring "total variation in the data":
+In applied PCA we examine how many principal components must be added to explain a majority of the variation in the data. The algebraic solution for the minimum value of the sum of square errors motivates in Proposition \@ref(prp:MESS) the following definition for measuring "total variation in the data" (see @johnson2014applied, page 433):
 
  ```{definition, TotalVar, name="Total Sample Variance"}
  
@@ -260,13 +260,13 @@ In applied PCA we examine how many principal components must be added to explain
  
  $$trace(S)= \sum_{i=1}^{p} s_{ii}$$
  
-It can be shown that the total sample variance equals $\sum_{i=1}^{p} \lambda_{i}$. see page 433
+It can be shown that the total sample variance equals $\sum_{i=1}^{p} \lambda_{i}$.
 
  $\square$
 ```
 **Geometrical Approach**
 
-We get a better feel for what is going on in PCA with the following geometrical argument (p.468). Let's consider a scatter plot of the sample data in p-dimensional space (one dimension for each variable measured). We want to approximate each observation as a point in an r-dimensional hyperplane (nb. r < p) and we want this approximation to be as accurate as possible.
+We get a better feel for what is going on in PCA with the following geometrical argument (see @johnson2014applied, p.468). Let's consider a scatter plot of the sample data in p-dimensional space (one dimension for each variable measured). We want to approximate each observation as a point in an r-dimensional hyperplane (nb. r < p) and we want this approximation to be as accurate as possible.
 
 (ref:PCA) The $r=2$ dimensional plane that approximates the scatter plot by minimising the sum of square deveiations. Reproduced from @johnson2014applied, supplement 8A, page 469$
 
@@ -319,7 +319,7 @@ Applying the minimisation result from Proposition \@ref(prp:MESS) for the error 
 
 where the inequality follows from the previous minimisation lemma. Minimisation occurs where $a=\overline{x}$ and $Ub_{j}=\widehat{E_{r}}\widehat{E_{r}}^´(x_{j}-\overline{x}))$
 
-For proof see ([])
+
 $\square$
 ```
 
@@ -345,9 +345,72 @@ $\square$
 The contribution of the ith principal component to the total sample variance is
 $\lambda_{i}$. 
 
+
+## Canonical Correlation Analysis {#Canonical}
+
+We saw in Section [] that the ability of a linear predictor to explain the variation in a response variable is measured by the coefficient of determination. The best linear predictor explains the most variation in the response $Y$ and maximises the absolute value of its correlation coefficient with $Y$. The upper limit on the correlation that can be achieved is the Multiple Correlation Coefficient $\rho_{Y(Z)}$.
+
+Canonical Correlation Analysis is an extension of this approach. A key difference is that it takes linear combinations of **both** the "response" $\underset{(p \times 1)}{X^{(1)}}$ and "explanatory" $\underset{(q \times 1)}{X^{(1)}}$ sets of variables. In doing so, it finds transformed co-ordinates in which the correlations are higher than any individual entry in $\underset{(p \times q)}{\Sigma_{12}}$. In doing so, it answers questions like what is the maximum proportion of variation in data set (1) that can be explained by data set (2) and vice-versa?  
+
+**Linear Analysis Approach**
+
+The key definition is given below: (see @johnson2014applied, Section 9.3, page 490)
+
+```{proposition, name="Identifying Canonical Correlates"}
+
+Suppose $p \leq q$ and let the random vectors $\underset{p \times 1}{X^{(1)}}$ and $\underset{q \times 1}{X^{(2)}}$ have $Cov(X^{(1)})=\underset{(p \times p)}{\Sigma_{11}}$, $Cov(X^{(2)})=\underset{(q \times q)}{\Sigma_{22}}$ and $Cov(X^{(1)}, X^{(2)})=\underset{(p \times q)}{\Sigma_{12}}$, where $\Sigma$ has full rank. For coefficient vectors $\underset{(p \times 1)}{a}$ and $\underset{(q \times p)}{b}$, form the linear combinations $U=b^´X^{(1)}$ and $V=b^´X^{(2)}$. Then:
+
+$$\underset{a,b}{max}Corr(U,V)=\rho_{1}^*$$
+
+is attained by the linear combinations (first canonical variate pair):
+
+\begin{align}
+U_{1}&=e_{1}^´\Sigma_{11}^{-0.5}X^{(1)}=a_{1}^´X^{(1)}\\
+V_{1}&=f_{1}^´\Sigma_{22}^{-0.5}X^{(2)}=b_{1}^´X^{(2)}
+\end{align}
+
+where $a_{1}^´:=e_{1}^´\Sigma_{11}^{-0.5}$ and $b_{1}^´:=f_{1}^´\Sigma_{22}^{-0.5}$.
+
+The kth pair of canonical variates k=2,3,...,p:
+
+\begin{align}
+U_{k}&=e_{k}^´\Sigma_{11}^{-0.5}X^{(1)}=a_{k}^´X^{(1)}\\
+V_{k}&=f_{k}^´\Sigma_{22}^{-0.5}X^{(2)}=b_{k}^´X^{(2)}
+\end{align}
+
+maximises $Corr(U_{k},V_{k})=\rho_{K}^*$ among those linear combinations uncorrelated with the proceeding 1,2,...,k-1 canonical variables.
+
+Here $\rho_{1}^* \geq \rho_{2}^* ... \geq \rho_{p}^*$ are the eigenvalues of $\Sigma_{11}^{-0.5}\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21}\Sigma_{11}^{-0.5}$ and $e_{1},...,e_{p}$ are the associated (p x 1) eigenvectors. The quantities $\rho_{1}^* \geq \rho_{2}^* ... \geq \rho_{p}^*$ are also the p largest eigenvalues of the matrix $\Sigma_{22}^{-0.5}\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\Sigma_{22}^{-0.5}$ with corresponding (q x 1) eigenvectors $f_{1},...,f_{p}$.
+
+$\square$
+```
+
+**Geometrical Approach**
+
+The geometric insight (see @johnson2014applied, page 549) is that transforming to canonical co-ordinates equates to:
+
+1.  A transformation of $X^{(1)}$ to uncorrelated and standardised principal components
+2.  A rigid (orthogonal) rotation $P_{1}$ determined by $\Sigma_{11}$ 
+3.  Another transformation $E^´$ determined by the full covariance matrix $\Sigma$
+
+The same argument applies to $X^{(2)}$.
+
+```{proposition, name="Geometrical Description of Canonical Variables"}
+
+Let $\underset{(p \times 1)}{U}=AX^{(1)}$ denote the transformation to canonical co-ordinates, where $A_{k}=e_{k}^´\Sigma_{11}$ and $e_{k}$ is the kth eigenvector of $\Sigma_{11}^{-0.5}\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21}\Sigma_{11}^{-0.5}$. In matrix notation:
+
+$$U=AX^{(1)}=E^´\Sigma_{11}^{-0.5}X^{(1)}=E^´P_{1} \Lambda_{11}^{-0.5} P_{1}^´X^{(1)}$$
+
+where $P_{1} \Lambda_{11}^{-0.5} P_{1}$ is defined as per theorem \@ref(thm:spec).
+
+$\Lambda_{11}^{-0.5} P_{1}^´X^{(1)}$ is a transformation to uncorrelated and standardised principal components (Step1). Pre-Multiplication by $P_{1}$ equates with a rigid (orthogonal) rotation. Pre-Multiplication by $E^´$ is a transformation determined by the full covariance matrix $\Sigma$.
+
+$\square$
+```
+
 ## Factor Analysis {#Factor}
 
-Factor Analysis can be viewed as an extension of Multivariate Regression (determining a mean effect) and Principal Component Analysis (dimension reduction). However it seeks to answer a different question: whether groups of highly correlated variables in the data can be modelled as one by introducing new "common factor" variables (@johnson2014applied, Section 9.1, page 481).
+Factor Analysis can be viewed as an extension of Multivariate Regression (determining a mean effect) and Principal Component Analysis (dimension reduction). However it seeks to answer a different question: whether the data is consistent with groups of highly correlated variables being modelled as one by introducing new "common factor" variables (@johnson2014applied, Section 9.1, page 481).
 
 Below I have reproduced some of the key results for the Orthogonal Factor Model. In keeping with @johnson2014applied, I do not consider Factor Models with Oblique/non-orthogonal factors.
 
@@ -412,7 +475,7 @@ $\square$
 
 **Estimation**
 
-To motivate the Principal Component Solution to the Factor Model in Proposition \@ref(prp:FactorSol), we note that the spectral decomposition result in Proposition \@ref(prp:spec), allows a decomposition of the covariance matrix which fits the factor analysis model. Namely by setting $L:=[\sqrt{\lambda_{1}}e_{1}|\sqrt{\lambda_{2}}e_{2}| \cdots |\sqrt{\lambda_{p}}e_{p}]$:
+To motivate the Principal Component Solution to the Factor Model in Proposition \@ref(prp:FactorSol), we note that the spectral decomposition result in Proposition \@ref(thm:spec), allows a decomposition of the covariance matrix which fits the factor analysis model. Namely by setting $L:=[\sqrt{\lambda_{1}}e_{1}|\sqrt{\lambda_{2}}e_{2}| \cdots |\sqrt{\lambda_{p}}e_{p}]$:
 
 $$ 
 \underset{(p \times p)}{\Sigma}=\lambda_{1}e_{1}e_{1}^´ + \lambda_{2}e_{2}e_{2}^´+\cdots+\lambda_{p}e_{p}e_{p}^´=[\sqrt{\lambda_{1}}e_{1}|\sqrt{\lambda_{2}}e_{2}| \cdots |\sqrt{\lambda_{p}}e_{p}]
@@ -440,39 +503,3 @@ Communalities are estimated as:
 $$\widetilde{h_{i}^2}=\widetilde{l_{i1}^2}+\widetilde{l_{i2}^2}+...+\widetilde{l_{im}^2}$$
 
 ```
-
-## Canonical Correlation Analysis {#Canonical}
-
-Canonical correlation analysis seeks to concentrate the large number of individual correlations between two data sets into a small number of new variables. In doing so, we can measure the "shared variance" between the two data-sets. We can also answer whether sets of variables belonging to different data sets are related. 
-
-The key definition is given below: (see @johnson2014applied, Section 9.3, page 490)
-
-```{proposition, name="Identifying Canonical Correlates"}
-
-Suppose $p \leq q$ and let the random vectors $\underset{p \times 1}{X^{(1)}}$ and $\underset{q \times 1}{X^{(2)}}$ have $Cov(X^{(1)})=\underset{(p \times p)}{\Sigma_{11}}$, $Cov(X^{(2)})=\underset{(q \times q)}{\Sigma_{22}}$ and $Cov(X^{(1)}, X^{(2)})=\underset{(p \times q)}{\Sigma_{12}}$, where $\Sigma$ has full rank. For coefficient vectors $\underset{(p \times 1)}{a}$ and $\underset{(q \times p)}{b}$, form the linear combinations $U=b^´X^{(1)}$ and $V=b^´X^{(2)}$. Then:
-
-$$\underset{a,b}{max}Corr(U,V)=\rho_{1}^*$$
-
-is attained by the linear combinations (first canonical variate pair):
-
-\begin{align}
-U_{1}&=e_{1}^´\Sigma_{11}^{-0.5}X^{(1)}=a_{1}^´X^{(1)}\\
-V_{1}&=f_{1}^´\Sigma_{22}^{-0.5}X^{(2)}=b_{1}^´X^{(2)}
-\end{align}
-
-where $a_{1}^´:=e_{1}^´\Sigma_{11}^{-0.5}$ and $b_{1}^´:=f_{1}^´\Sigma_{22}^{-0.5}$.
-
-The kth pair of canonical variates k=2,3,...,p:
-
-\begin{align}
-U_{k}&=e_{k}^´\Sigma_{11}^{-0.5}X^{(1)}=a_{k}^´X^{(1)}\\
-V_{k}&=f_{k}^´\Sigma_{22}^{-0.5}X^{(2)}=b_{k}^´X^{(2)}
-\end{align}
-
-maximises $Corr(U_{k},V_{k})=\rho_{K}^*$ among those linear combinations uncorrelated with the proceeding 1,2,...,k-1 canonical variables.
-
-Here $\rho_{1}^* \geq \rho_{2}^* ... \geq \rho_{p}^*$ are the eigenvalues of $\Sigma_{11}^{-0.5}\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21}\Sigma_{11}^{-0.5}$ and $e_{1},...,e_{p}$ are the associated (p x 1) eigenvectors. The quantities $\rho_{1}^* \geq \rho_{2}^* ... \geq \rho_{p}^*$ are also the p largest eigenvalues of the matrix $\Sigma_{22}^{-0.5}\Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\Sigma_{22}^{-0.5}$ with corresponding (q x 1) eigenvectors $f_{1},...,f_{p}$.
-
-$\square$
-```
-

@@ -6,7 +6,7 @@
 
 I am interested in applying multivariate analysis to understand the factors affecting property prices. To do this, I sourced  a property data-set from the website @kaggle1 . The original data-set contained sale prices and property details for 21613 residential property sales between May 2014 and May 2015 in King County USA (includes Seattle).
 
-To discover which variables, not included in the data-set, are known to influence property prices I conducted a literature search. To fill these gaps, I performed significant data enrichment.This involved writing custom R code to extract data from online data providers. For local area information, I identified the Google Maps and Google Radar Search API services. For financial information such as rental values, I identified the data services of the Seattle based real estate and rental marketplace [Zillow](https://www.zillow.com/corp/About.htm).  
+To discover which variables, not included in the data-set, are known to influence property prices I conducted a literature search. This identified potential gaps and I performed significant data enrichment through writing custom R code to extract data from online data providers. For local area information, I identified the Google Maps and Google Radar Search API services. For financial information such as rental values, I identified the data services of the Seattle based real estate and rental marketplace [Zillow](https://www.zillow.com/corp/About.htm).  
 
 **Original Data**
 
@@ -20,10 +20,11 @@ The original data can be found on my GitHub site ([Source Data](ThesisPublished/
 |Bedrooms     |Dicrete Numeric   | Number of Bedrooms                                        |
 |Bathrooms    |Dicrete Numeric   | Number of Bathrooms                                       |
 |sqft_living  |Continuous Numeric| Size of the Living Space in square feet                   |
-|sqft_lot     |Continuous Numeric| Size of the garden in square feet                         |
+|sqft_lot     |Continuous Numeric| Total Size of the  property in square feet                         |
 |floors       |Dicrete Numeric   | Number of Floors in Property                              |
 |waterfront   |Categoric         | 1=Waterfront View, 0=No Waterfront View                   |
-|view         |Categoric         | 1=General View, 0= no General View                        |
+|view         |Categoric         | Number of Sides of Property with View
+              |
 |condition    |Categoric         | Property Condition (1=Poor Condition 5= Excellent Condition)|
 |grade        |Categoric         | Property Condition (1=Poor, 13= Excellent)                 |
 |sqft_above   |Continuous Numeric| Size of Upstairs Floors  in square feet                   |
@@ -33,6 +34,96 @@ The original data can be found on my GitHub site ([Source Data](ThesisPublished/
 |zipcode      |Categoric         | Postal Code                                               |
 |lat          |Continuous Numeric| Property Latitute                                         |
 |long         |Continuous Numeric| Property Longitude                                        |
+
+**Exploratory Analysis**
+
+For large, multivariate data sets it takes more time to search through and explore a data set. The plots below allow a quick inspection of the original data-set. 
+
+Whilst Visual inspection of the data table is tedious and unreliable, through sorting property ID's, I was able to identify that a small number of properties appear multiple times in the data. This comes about due to a single property being sold more than once during within the data collection period. For my analysis, I chose to retain only the most recent transactional record for properties with multiple appearances. This process reduced the size of the data-table from 21613 to 21436 rows.
+
+In figure \@ref(fig:Outliers1), we that the largest 6% of all sale transactions by number, account for 18% of the total transactional value in the data. Furthermore, as can be seen  this group of properties outlies the other property values.
+
+(ref:Outliers1) Revisiting the Data 1.
+
+```{r Outliers1,echo=FALSE, fig.cap='(ref:Outliers1)',fig.align='center'}
+knitr::include_graphics("Analysis/Images/Visualization1.png")
+```
+
+In figure \@ref(fig:DataExploration0), we see a large spread in the sizes of living spaces and a significant portion of properties without basements. In the lot size chart, we see again a large spread of sizes with a significant upper tail. 
+
+(ref:DataExploration0) Revisiting the Data 2.
+
+```{r DataExploration0,echo=FALSE, fig.cap='(ref:DataExploration0)',fig.align='center'}
+knitr::include_graphics("Analysis/Images/Exploratory1.jpg")
+
+
+```
+
+In figure \@ref(fig:DataExploration2), we see that the modal number of bedrooms is three and the modal number of bathrooms is 2. There are 13 and 85 properties with no bedrooms or no bathrooms respectively. These are understood to be data entry errors are are excluded from the analysis data sets. There is also one mid-value property in the data with 33 bedrooms, this should also be excluded as an error. 
+
+(ref:DataExploration2) Revisiting the Data 3.
+
+```{r DataExploration2,echo=FALSE, fig.cap='(ref:DataExploration2)',fig.align='center'}
+
+knitr::include_graphics("Analysis/Images/Exploratory2.jpg")
+
+
+```
+
+
+In figure \@ref(fig:DataExploration3), we see that the vast majority of the properties in the data-set do not have a waterfront view. This is surprising given the presence of significant lakes near to Seattle. We do see in figure \@ref(fig:DataExploration4), that a significant minority of properties do have a general view. It is possible that the low number of waterfront view properties is due to a very restrictive criteria set being applied (eg. property must be next to water for a waterfront view flag). The vast majority of the properties in the data are either single storey appartments or bungalows (10559) or two storey maisonettes (8209).
+
+(ref:DataExploration3) Revisiting the Data 4.
+
+```{r DataExploration3,echo=FALSE, fig.cap='(ref:DataExploration3)',fig.align='center'}
+
+knitr::include_graphics("Analysis/Images/Exploratory4.jpg")
+
+
+```
+
+In figure \@ref(fig:DataExploration4), we see that a significant minority of the properties in the data-set (approx 10%) have a view on at least one side
+There are only 193 properties in the data-set in poor condition (ie. condition less than 2). Visual inspection of these records, shows that they were built in the early 20th century and may have become dilapidated.
+
+(ref:DataExploration4) Revisiting the Data 5.
+
+```{r DataExploration4,echo=FALSE, fig.cap='(ref:DataExploration4)',fig.align='center'}
+
+knitr::include_graphics("Analysis/Images/Exploratory5.jpg")
+
+
+```
+
+In figure \@ref(fig:DataExploration5), we see that the vast majority of properties were built in late 20th century and early 21st century. The earliest construction date in the data is 1900.The grade metric is another measure of property condition. As it has a wider range of values than "condition", it looks like a better differentiator of properties in good and bad states of repair.
+
+(ref:DataExploration5) Revisiting the Data 6.
+
+```{r DataExploration5,echo=FALSE, fig.cap='(ref:DataExploration5)',fig.align='center'}
+
+knitr::include_graphics("Analysis/Images/Exploratory6.jpg")
+
+
+```
+
+
+## Detecting Outliers and Errors
+
+For large, multivariate data sets it is harder to search for individual outliers and errors. Visual inspection of the data table is tedious and unreliable. Through sorting the property ID's, I was able to identify that a small number of properties appears multiple times in the data. This comes about due to a single property being sold more than once during within the data collection period. For my analysis, I chose to retain only the most recent transactional record for properties with multiple appearances. This process reduced the size of the data-table from 21613 to 21436 rows.
+
+Whilst the interdependencies between variables renders "one-at-a-time" approaches that focus on marginal distributions unreliable. Through plotting marginal distributions, I was able to identify that the largest 6% of all sale transactions by number, account for 18% of the total transactional value in the data. Furthermore, as can be seen in figure \@ref(fig:Outliers1), this group of properties outlies the other property values.
+
+
+MULTIVARIATE ANALYSIS APPROACH
+
+Powerful statistical techniques exist for detecting outliers in data generated by Multivariate normal distributions. Individual variables, when standardised, should follow the $t_{n-1}$ distribution. The generalised distance of each vector of observations $\underset{(p \times 1)}{x_{j}}$ from the sample mean $(x_{j}-\overline{x})^´S(x_{j}-\overline{x})$ is approximately $\chi_{p-1}^2$ distributed. This means that, in addition to univariate and bivariate scatter plots, we can numerically identify outliers as points corresponding to very low or very high significance levels (see @johnson2014applied, Chapter 4, page 189).
+
+By transforming the data set to standardised co-ordinates and then to a principal component decomposition, I hope to recover new, "continuous" variables where the discreteness in the original data is not so prominent. Subsequently by performing power law transformations, I hope to obtain variables which are approximately, univariate normal random variables. This will then enable me to use the following procedure to identify outliers:
+
+1. Calculate the standardized values $z_{jk}=\frac{(x_{jk}-\overline{x_{k}})}{\sqrt{s_{kk}}}$ for j=1,2,...,n and eachh column k=1,....,p in the data matrix. Examine these standardized values for very large or very small values.
+2. Calculate the generalised squared distances $(x_{j}-\overline{x})^´S(x_{j}-\overline{x})$. Examine for unusually large values.
+
+##Data Enrichment
+
 
 **Literature Review Results**
 
@@ -63,7 +154,8 @@ An online literature search helped to mitigate this risk and identified variable
 |Number of Bathrooms    | Website 1 |Bathrooms                 |
 |Condition of Interior  | Website 1 |Condition/Grade           |
 
-##Data Enrichment
+
+**Data Enrichment**
 
 The original data is missing a number of fields which the literature search flagged as important. In particular Proximity to Amenities, Rental Value, Large City vs not large. Some of these could simply be calculated from the original data. For example, since Seattle was the only large city in King County, "Large City vs Not Large" can be calculated using the zipcode data field and a list of Seattle zipcodes. 
 
@@ -106,256 +198,3 @@ RESULTS
 
 The enriched data set is found [online](ThesisPublished/Analysis/Data/EnrichedData).
 
-## Code
-
-The Reverse Geocode function is shown below:
-
-```{r RevGeoCode, eval=FALSE,fig.cap="Obtaining Address information"}
-
-library(httr)
-
-#Input1 is the row in the data-set we want to reverse geocode
-#Input2 is the original data-set
-#Input3 is the API access key
-
-ReverseGeo<-function(Input1,Input2,Input3){
-
-
-  #initialise some variables
-  j<-c(0)
-  k<-c(0)
-  LatLng<-c(0)
-  KeyVal<-c(0)
-  Output<-c(0)
-  Output2<-rep(NA,each=7)
-
-  #Put the inputs into dummy variables
-  j<-Input1
-  LatLng<-paste(Input2[j,2],",",Input2[j,3],sep="")
-  KeyVal<-Input3
-
-  #Use HTTR to query google and store the results
-  sample2<-GET("https://maps.googleapis.com/maps/api/geocode/json",
-               query=list(latlng=LatLng,
-                          key=KeyVal))
-
-  #Parse the results using httr
-  Output<-content(sample2)
-
-  #Parse the response again
-  #Ensures the information is placed in the correct order
-
-  for (k in 1:(min(7,length(Output$results[[1]]$address_components))))
-
-    {
-
-      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="street_number")
-          {Output2[1]<-strsplit(
-                          Output$results[[1]]$address_components[[k]]$long_name,
-                          "-")[[1]][1]}
-
-      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="route")
-          {Output2[2]<-Output$results[[1]]$address_components[[k]]$long_name}
-
-      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="locality")
-          {Output2[3]<-Output$results[[1]]$address_components[[k]]$long_name}
-
-      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="administrative_area_level_2")
-          {Output2[4]<-Output$results[[1]]$address_components[[k]]$long_name}
-
-      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="administrative_area_level_1")
-          {Output2[5]<-Output$results[[1]]$address_components[[k]]$long_name}
-
-      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="country")
-          {Output2[6]<-Output$results[[1]]$address_components[[k]]$long_name}
-
-      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="postal_code")
-          {Output2[7]<-Output$results[[1]]$address_components[[k]]$long_name}
-  }
-
-  #Return the parsed address details
-  Output2
-
-}
-
-```
-
-The Radar Search function is shown below:
-
-```{r, eval=FALSE,fig.cap="Obtaining Neighbourhood Information using Radar Search"}
-#################
-# Created by: Ed Anderson
-# Date: 09/04/2017
-##################
-
-# Radar Search With Google API
-# Function contacts the Google API and returns local area information
-# Example Query:
-#
-# RadarSearch(1,data2[,c("Lat","Long")],100,"AIzaSyC5dvHAt1QbcWtdIaDWHnLLUaAARJSSSPs","School")
-#
-# A key value needs to be obtained from here:
-# Here is my key "AIzaSyC5dvHAt1QbcWtdIaDWHnLLUaAARJSSSPs"
-# https://developers.google.com/maps/documentation/geocoding/get-api-key
-
-## Load Packages
-
-library(httr)
-
-#Input1 is an integer value, it identifies the row in the data-frame
-#Input2 is a data-frame, it contains the lat-long information of the properties
-#Input3 is a numeric value. It is used for the radius of the search
-#Input4 is the Google API key
-#Input5 is the Place of Interest (eg. Restaurants)
-
-RadarSearch<-function(Input1,Input2,Input3,Input4,Input5){
-
-  #Declare some variables
-  i<-c(0)
-  LatLon<-c(0)
-  Radius<-c(0)
-  Type<-c(0)
-  Key<-c(0)
-
-  #Populate the variables
-  i<-Input1
-  LatLong<-paste(Input2[i,1],",",Input2[i,2],sep="")
-  Radius<- paste(Input3)
-  Type<- Input5
-  Key<-Input4
-
-
-  #Build an API query and store the results
-  sample2<-GET("https://maps.googleapis.com/maps/api/place/nearbysearch/json",
-               query=list(location=LatLong,
-                          radius=Radius,
-                          #type=typ,
-                          types=Type,
-                          #keyword=keyw,
-                          key=Key))
-
-  #Output the number of successful search results
-  length(content(sample2)$results)
-
-}
-
-
-######################################
-
-
-```
-
-The Zillow Rental Estimate function is shown below:
-
-```{r, eval=FALSE}
-
-Zillowf<-function(property) {
-
-  #Create a local variable to store the search results
-  Output<-list(zpid=character(999),
-               AddressStreet=character(999),
-               AddressZipCode=character(999),
-               AddressCity=character(999),
-               AddressState=character(999),
-               AddressLatitude=character(999),
-               AddressLongitude=character(999),
-               UseCode=as.character(999),
-               YearBuilt=as.character(999),
-               LotSizeSqFt=as.character(999),
-               FinishedSizeSqFt=as.character(999),
-               BathroomNo=as.character(999),
-               BedroomNo=as.character(999),
-               #LastSoldDate=character(999),
-               #LastSoldPrice=character(999),
-               ZestimateAmount=as.character(999),
-               ZestimateLastUpdated=as.character(999),
-               ZestimateOneWeekChange=as.character(999),
-               ZestimateValueChange=as.character(999),
-               ZestimateValueChangeDuration=as.character(999),
-               ZestimateLowValueRange=as.character(999),
-               ZestimateHighValueRange=as.character(999),
-               ZestimateValuePercentile=as.character(999),
-               RZestimateAmount=as.character(999),
-               RZestimateLastUpdated=as.character(999),
-               RZestimateOneWeekChange=as.character(999),
-               RZestimateValueChange=as.character(999),
-               RZestimateValueChangeDuration=as.character(999),
-               RZestimateLowValueRange=as.character(999),
-               RZestimateHighValueRange=as.character(999),
-               RegionIndexValue=as.character(999),
-               RegionAttributeName=as.character(999),
-               RegionAttributeNeighbourhood=as.character(999),
-               RegionAttributeID=as.character(999))
-
-  # Loop through the list of results and place the data in appropriate place
-
-  for (k in 1:length(row.names(property))){
-
-    if (row.names(property)[k]=="zpid")
-    {Output$zpid=property[[k]]}
-
-    else if (row.names(property)[k]=="address")
-    {Output$AddressStreet=property[[k]]$street
-    Output$AddressZipCode=property[[k]]$zipcode
-    Output$AddressCity=property[[k]]$city
-    Output$AddressState=property[[k]]$state
-    Output$AddressLatitude=property[[k]]$latitude
-    Output$AddressLongitude=property[[k]]$longitude}
-
-    else if (row.names(property)[k]=="useCode")
-    {
-      Output$UseCode=property[[k]]
-    }
-
-    else if (row.names(property)[k]=="finishedSqFt")
-    {
-      Output$FinishedSizeSqFt=property[[k]]
-    }
-    else if (row.names(property)[k]=="bathrooms")
-    {
-      Output$BathroomNo=property[[k]]
-    }
-    else if (row.names(property)[k]=="bedrooms")
-    {
-      Output$BedroomNo=property[[k]]
-    }
-
-    else if (row.names(property)[k]=="zestimate")
-    {
-
-      if(length(property[[k]]$amount)!=1){Output$ZestimateAmount=property[[k]]$amount$text} else {Output$ZestimateAmount="999"}
-      Output$ZestimateLastUpdated=property[[k]]$`last-updated`
-      Output$ZestimateOneWeekChange=property[[k]]$oneWeekChange[[1]]
-      if(!is.null(property[[k]]$valueChange$text)) {Output$ZestimateValueChange=property[[k]]$valueChange$text}
-      if (!is.null(property[[k]]$valueChange$.attrs[[1]])) {Output$ZestimateValueChangeDuration=property[[k]]$valueChange$.attrs[[1]]}
-      Output$ZestimateLowValueRange=property[[k]]$valuationRange[[1]]
-      if (length(property[[k]]$valuationRange)>2) {Output$ZestimateHighValueRange=property[[k]]$valuationRange[[3]]} else {Output$ZestimateHighValueRange="999"}
-      Output$ZestimateValuePercentile=property[[k]]$percentile[[1]]
-    }
-    else if (row.names(property)[k]=="rentzestimate")
-    {
-      Output$RZestimateAmount=property[[k]]$amount$text
-      Output$RZestimateLastUpdated=property[[k]]$`last-updated`
-      Output$RZestimateOneWeekChange=property[[k]]$oneWeekChange[[1]]
-      Output$RZestimateValueChange=property[[k]]$valueChange$text
-      Output$RZestimateValueChangeDuration=property[[k]]$valueChange$.attrs[[1]]
-      Output$RZestimateLowValueRange=property[[k]]$valuationRange[[1]]
-      Output$RZestimateHighValueRange=property[[k]]$valuationRange[[3]]
-    }
-
-    else if (row.names(property)[k]=="localRealEstate")
-    {
-      Output$RegionIndexValue="999" #property[[k]][[1]]
-      Output$RegionAttributeName="999" #property[[k]][[3]][[1]]
-      Output$RegionAttributeNeighbourhood="999" #property[[k]][[3]][[3]]
-      Output$RegionAttributeID="999" #property[[k]][[3]][[2]]
-    }
-
-  }
-
-  Output
-
-
-
-}
-```

@@ -1,6 +1,8 @@
+# (PART) Theory {-}
+
 # Multivariate Analysis {#Theory}
 
-The following sections on Multivariate Analysis are drawn from @johnson2014applied. The [Key Elements Section]{#Analysis1} below draws heavily from Chapters 2 and 3. 
+The following sections on Multivariate Analysis are drawn from @johnson2014applied. The [Key Elements Section](#Analysis1) below draws heavily from Chapters 2 and 3. 
 
 ##Key Elements of Multivariate Statistics {#Analysis1}
 
@@ -141,7 +143,7 @@ $\square$
 
 As will be shown later an equivalent objective function is to maximise the population multiple correlation coefficient.
 
-```{definition, name="Population Multiple Correlation Coefficient"}
+```{definition, rho, name="Population Multiple Correlation Coefficient"}
 If we partition the mean vector and covariance matrix of the response and explanatory variables as follows:
 
 $$\mu = \begin{bmatrix} \underset{(1 \times 1)}{\mu_{Y}}\\
@@ -174,7 +176,7 @@ The Extended Cauchy Schwarz inequality, with positive definite matrix $\underset
 $\square$
 ```
 
-```{proposition, name="Upper Bound on Correlation between Response Variable and Linear Predictor"}
+```{proposition, upper, name="Upper Bound on Correlation between Response Variable and Linear Predictor"}
 
 If we set $d=\underset{(r \times 1)}{\sigma_{ZY}}$, $B=\underset{(r \times 1)}{\sigma_{ZZ}}$ and $b=b_{Z}$ in the extended Cauchy Schwarz Inequality, we obtain the bound $$(b_{Z}^{´}\sigma_{ZY})^2 \leqslant (b_{Z}^{´}\sigma_{ZZ}b_{Z})(\sigma_{ZY}^{´}\sigma_{ZZ}^{-1}\sigma_{ZY})$$.
 
@@ -221,7 +223,7 @@ $\square$
 
 The link with the Multiple Correlation Coefficient is established as follows:
 
-```{proposition, name="Link between Mean Squared Prediction Error and Multiple Correlation Coefficient"}
+```{proposition, link, name="Link between Mean Squared Prediction Error and Multiple Correlation Coefficient"}
 
 We can re-arrange the formula for the minimum mean squared prediction error as follows:
 

@@ -4,6 +4,7 @@ library(rcompanion)
 
 #Obtain Data
 PCAData<-read.table(file="Analysis/Data/EnrichedData",sep=",",header = TRUE)
+Normal<-read.csv(file="Analysis/Data/kc_house_data.csv",sep=",",header = TRUE)
 
 #Drop Unwanted Columns
 PCAData2<-PCAData[,c(2,5:9,11,13:15,17,19,25:34,67)]

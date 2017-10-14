@@ -1,48 +1,340 @@
-## Detecting Outliers and Errors
+## Visualising Geospatial data
 
-EXPLORATORY ANALYSIS 
+The plots below show the data fields obtained in this way. The plots were created using the sp package in R. It is clear that some neighbourhood properties change significantly by location (eg. number of schools in 1000m). There are also variables which hardly change at all (eg. Number of Liquor Stores).
 
-For large, multivariate data sets it is harder to search for individual outliers and errors. Visual inspection of the data table is tedious and unreliable. Through sorting the property ID's, I was able to identify that a small number of properties appears multiple times in the data. This comes about due to a single property being sold more than once during within the data collection period. For my analysis, I chose to retain only the most recent transactional record for properties with multiple appearances. This process reduced the size of the data-table from 21613 to 21436 rows.
+(ref:Geo3) Number of Schools within 1000m by Location
 
-Whilst the interdependencies between variables renders "one-at-a-time" approaches that focus on marginal distributions unreliable. Through plotting marginal distributions, I was able to identify that the largest 6% of all sale transactions by number, account for 18% of the total transactional value in the data. Furthermore, as can be seen in figure \@ref(fig:Outliers1), this group of properties outlies the other property values.
-
-(ref:Outliers1) Checking for Outliers.
-
-```{r Outliers1,echo=FALSE, fig.cap='(ref:Outliers1)',fig.align='center'}
-knitr::include_graphics("Analysis/Images/Visualization1.png")
+```{r Geo3,echo=FALSE, fig.cap='(ref:Geo3)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoPlotSchools1000m.png")
 ```
 
-An initial inspection of the original data-set yields the visualisations in figures \@ref(fig:DataExploration1) and \@ref(fig:DataExploration2). As can be seen, for discrete numeric variables (eg. number of bedrooms, bathrooms etc), there are only small numbers of properties with very high values . These were checked by visual inspection in the data and were all associated with large property values and large living areas and hence are not considered to be outliers. For categorical variables it makes no sense to talk of outliers.
+(ref:Geo4) Number of Doctors or Dentists within 500m by Location
 
-(ref:DataExploration1) Revisiting the Data.
+```{r Geo4,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoPlotDocDent500.png")
+```
 
-```{r DataExploration1,echo=FALSE, fig.cap='(ref:DataExploration1)',fig.align='center'}
-knitr::include_graphics("Analysis/Images/Exploratory1.jpg")
+(ref:Geo5) Number of Grocery Stores or Supermarkets within 1000m by Location
 
-knitr::include_graphics("Analysis/Images/Exploratory2.jpg")
+```{r Geo5,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoPlotGroceries1000m.png")
+```
 
-knitr::include_graphics("Analysis/Images/Exploratory3.jpg")
+(ref:Geo6) Number of Libraries within 750m by Location
 
-knitr::include_graphics("Analysis/Images/Exploratory4.jpg")
+```{r Geo6,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoPlotLibraries750m.png")
+```
 
-knitr::include_graphics("Analysis/Images/Exploratory5.jpg")
+(ref:Geo7) Number of Liquor Stores within 250m by Location
 
-knitr::include_graphics("Analysis/Images/Exploratory6.jpg")
+```{r Geo7,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoPlotLiquor.png")
+```
+
+(ref:Geo8) Number of Restaurants within 250m by Location
+
+```{r Geo8,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoPlotRest250m.png")
+```
+
+(ref:Geo9) Bus or Transit Station within 100m by Location
+
+```{r Geo9,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoBusTransit100m.png")
+```
+
+(ref:Geo10) Number of Department Stores of Malls withing 750m by Location
+
+```{r Geo10,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoMallDepartment.png")
+```
+
+(ref:Geo11) Average Monthly Rental Value by Location
+
+```{r Geo11,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoRental1.png")
+```
+
+(ref:Geo15) Number of Police Stations within 1000m
+
+```{r Geo15,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoPlotPoliceStations1000m.png")
+```
+
+
+**Other Data**
+
+It is suprising to find spatial patterns when we plot property specific variables (eg. Construction Year) by location. For example with Construction Year, the oldest properties are located in the north-west region and properties get progressively newer as we move east.
+
+(ref:Geo12) Plot of Property Construction Year by Location
+
+```{r Geo12,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoPlotConstructionYr.png")
+```
+
+(ref:Geo13) Plot of Number of Floors by Location
+
+```{r Geo13,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoPlotFloorNo.png")
+```
+
+(ref:Geo14) Plot of Number of Bedrooms by Location
+
+```{r Geo14,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoPlotBedrooms.png")
+```
+
+## Code
+
+The Reverse Geocode function is shown below:
+
+```{r RevGeoCode, eval=FALSE,fig.cap="Obtaining Address information"}
+
+library(httr)
+
+#Input1 is the row in the data-set we want to reverse geocode
+#Input2 is the original data-set
+#Input3 is the API access key
+
+ReverseGeo<-function(Input1,Input2,Input3){
+
+
+  #initialise some variables
+  j<-c(0)
+  k<-c(0)
+  LatLng<-c(0)
+  KeyVal<-c(0)
+  Output<-c(0)
+  Output2<-rep(NA,each=7)
+
+  #Put the inputs into dummy variables
+  j<-Input1
+  LatLng<-paste(Input2[j,2],",",Input2[j,3],sep="")
+  KeyVal<-Input3
+
+  #Use HTTR to query google and store the results
+  sample2<-GET("https://maps.googleapis.com/maps/api/geocode/json",
+               query=list(latlng=LatLng,
+                          key=KeyVal))
+
+  #Parse the results using httr
+  Output<-content(sample2)
+
+  #Parse the response again
+  #Ensures the information is placed in the correct order
+
+  for (k in 1:(min(7,length(Output$results[[1]]$address_components))))
+
+    {
+
+      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="street_number")
+          {Output2[1]<-strsplit(
+                          Output$results[[1]]$address_components[[k]]$long_name,
+                          "-")[[1]][1]}
+
+      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="route")
+          {Output2[2]<-Output$results[[1]]$address_components[[k]]$long_name}
+
+      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="locality")
+          {Output2[3]<-Output$results[[1]]$address_components[[k]]$long_name}
+
+      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="administrative_area_level_2")
+          {Output2[4]<-Output$results[[1]]$address_components[[k]]$long_name}
+
+      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="administrative_area_level_1")
+          {Output2[5]<-Output$results[[1]]$address_components[[k]]$long_name}
+
+      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="country")
+          {Output2[6]<-Output$results[[1]]$address_components[[k]]$long_name}
+
+      if (Output$results[[1]]$address_components[[k]]$types[[1]]=="postal_code")
+          {Output2[7]<-Output$results[[1]]$address_components[[k]]$long_name}
+  }
+
+  #Return the parsed address details
+  Output2
+
+}
 
 ```
 
-```{r DataExploration2,echo=FALSE, fig.cap='(ref:DataExploration1)',fig.align='center',out.width='40%'}
-knitr::include_graphics("Analysis/Images/Exploratory7.jpg")
+The Radar Search function is shown below:
+
+```{r, eval=FALSE,fig.cap="Obtaining Neighbourhood Information using Radar Search"}
+#################
+# Created by: Ed Anderson
+# Date: 09/04/2017
+##################
+
+# Radar Search With Google API
+# Function contacts the Google API and returns local area information
+# Example Query:
+#
+# RadarSearch(1,data2[,c("Lat","Long")],100,"AIzaSyC5dvHAt1QbcWtdIaDWHnLLUaAARJSSSPs","School")
+#
+# A key value needs to be obtained from here:
+# Here is my key "AIzaSyC5dvHAt1QbcWtdIaDWHnLLUaAARJSSSPs"
+# https://developers.google.com/maps/documentation/geocoding/get-api-key
+
+## Load Packages
+
+library(httr)
+
+#Input1 is an integer value, it identifies the row in the data-frame
+#Input2 is a data-frame, it contains the lat-long information of the properties
+#Input3 is a numeric value. It is used for the radius of the search
+#Input4 is the Google API key
+#Input5 is the Place of Interest (eg. Restaurants)
+
+RadarSearch<-function(Input1,Input2,Input3,Input4,Input5){
+
+  #Declare some variables
+  i<-c(0)
+  LatLon<-c(0)
+  Radius<-c(0)
+  Type<-c(0)
+  Key<-c(0)
+
+  #Populate the variables
+  i<-Input1
+  LatLong<-paste(Input2[i,1],",",Input2[i,2],sep="")
+  Radius<- paste(Input3)
+  Type<- Input5
+  Key<-Input4
+
+
+  #Build an API query and store the results
+  sample2<-GET("https://maps.googleapis.com/maps/api/place/nearbysearch/json",
+               query=list(location=LatLong,
+                          radius=Radius,
+                          #type=typ,
+                          types=Type,
+                          #keyword=keyw,
+                          key=Key))
+
+  #Output the number of successful search results
+  length(content(sample2)$results)
+
+}
+
+
+######################################
+
+
 ```
 
+The Zillow Rental Estimate function is shown below:
 
-MULTIVARIATE ANALYSIS APPROACH
+```{r, eval=FALSE}
 
-Powerful statistical techniques exist for detecting outliers in data generated by Multivariate normal distributions. Individual variables, when standardised, should follow the $t_{n-1}$ distribution. The generalised distance of each vector of observations $\underset{(p \times 1)}{x_{j}}$ from the sample mean $(x_{j}-\overline{x})^´S(x_{j}-\overline{x})$ is approximately $\chi_{p-1}^2$ distributed. This means that, in addition to univariate and bivariate scatter plots, we can numerically identify outliers as points corresponding to very low or very high significance levels (see @johnson2014applied, Chapter 4, page 189).
+Zillowf<-function(property) {
 
-By transforming the data set to standardised co-ordinates and then to a principal component decomposition, I hope to recover new, "continuous" variables where the discreteness in the original data is not so prominent. Subsequently by performing power law transformations, I hope to obtain variables which are approximately, univariate normal random variables. This will then enable me to use the following procedure to identify outliers:
+  #Create a local variable to store the search results
+  Output<-list(zpid=character(999),
+               AddressStreet=character(999),
+               AddressZipCode=character(999),
+               AddressCity=character(999),
+               AddressState=character(999),
+               AddressLatitude=character(999),
+               AddressLongitude=character(999),
+               UseCode=as.character(999),
+               YearBuilt=as.character(999),
+               LotSizeSqFt=as.character(999),
+               FinishedSizeSqFt=as.character(999),
+               BathroomNo=as.character(999),
+               BedroomNo=as.character(999),
+               #LastSoldDate=character(999),
+               #LastSoldPrice=character(999),
+               ZestimateAmount=as.character(999),
+               ZestimateLastUpdated=as.character(999),
+               ZestimateOneWeekChange=as.character(999),
+               ZestimateValueChange=as.character(999),
+               ZestimateValueChangeDuration=as.character(999),
+               ZestimateLowValueRange=as.character(999),
+               ZestimateHighValueRange=as.character(999),
+               ZestimateValuePercentile=as.character(999),
+               RZestimateAmount=as.character(999),
+               RZestimateLastUpdated=as.character(999),
+               RZestimateOneWeekChange=as.character(999),
+               RZestimateValueChange=as.character(999),
+               RZestimateValueChangeDuration=as.character(999),
+               RZestimateLowValueRange=as.character(999),
+               RZestimateHighValueRange=as.character(999),
+               RegionIndexValue=as.character(999),
+               RegionAttributeName=as.character(999),
+               RegionAttributeNeighbourhood=as.character(999),
+               RegionAttributeID=as.character(999))
 
-1. Calculate the standardized values $z_{jk}=\frac{(x_{jk}-\overline{x_{k}})}{\sqrt{s_{kk}}}$ for j=1,2,...,n and eachh column k=1,....,p in the data matrix. Examine these standardized values for very large or very small values.
-2. Calculate the generalised squared distances $(x_{j}-\overline{x})^´S(x_{j}-\overline{x})$. Examine for unusually large values.
+  # Loop through the list of results and place the data in appropriate place
+
+  for (k in 1:length(row.names(property))){
+
+    if (row.names(property)[k]=="zpid")
+    {Output$zpid=property[[k]]}
+
+    else if (row.names(property)[k]=="address")
+    {Output$AddressStreet=property[[k]]$street
+    Output$AddressZipCode=property[[k]]$zipcode
+    Output$AddressCity=property[[k]]$city
+    Output$AddressState=property[[k]]$state
+    Output$AddressLatitude=property[[k]]$latitude
+    Output$AddressLongitude=property[[k]]$longitude}
+
+    else if (row.names(property)[k]=="useCode")
+    {
+      Output$UseCode=property[[k]]
+    }
+
+    else if (row.names(property)[k]=="finishedSqFt")
+    {
+      Output$FinishedSizeSqFt=property[[k]]
+    }
+    else if (row.names(property)[k]=="bathrooms")
+    {
+      Output$BathroomNo=property[[k]]
+    }
+    else if (row.names(property)[k]=="bedrooms")
+    {
+      Output$BedroomNo=property[[k]]
+    }
+
+    else if (row.names(property)[k]=="zestimate")
+    {
+
+      if(length(property[[k]]$amount)!=1){Output$ZestimateAmount=property[[k]]$amount$text} else {Output$ZestimateAmount="999"}
+      Output$ZestimateLastUpdated=property[[k]]$`last-updated`
+      Output$ZestimateOneWeekChange=property[[k]]$oneWeekChange[[1]]
+      if(!is.null(property[[k]]$valueChange$text)) {Output$ZestimateValueChange=property[[k]]$valueChange$text}
+      if (!is.null(property[[k]]$valueChange$.attrs[[1]])) {Output$ZestimateValueChangeDuration=property[[k]]$valueChange$.attrs[[1]]}
+      Output$ZestimateLowValueRange=property[[k]]$valuationRange[[1]]
+      if (length(property[[k]]$valuationRange)>2) {Output$ZestimateHighValueRange=property[[k]]$valuationRange[[3]]} else {Output$ZestimateHighValueRange="999"}
+      Output$ZestimateValuePercentile=property[[k]]$percentile[[1]]
+    }
+    else if (row.names(property)[k]=="rentzestimate")
+    {
+      Output$RZestimateAmount=property[[k]]$amount$text
+      Output$RZestimateLastUpdated=property[[k]]$`last-updated`
+      Output$RZestimateOneWeekChange=property[[k]]$oneWeekChange[[1]]
+      Output$RZestimateValueChange=property[[k]]$valueChange$text
+      Output$RZestimateValueChangeDuration=property[[k]]$valueChange$.attrs[[1]]
+      Output$RZestimateLowValueRange=property[[k]]$valuationRange[[1]]
+      Output$RZestimateHighValueRange=property[[k]]$valuationRange[[3]]
+    }
+
+    else if (row.names(property)[k]=="localRealEstate")
+    {
+      Output$RegionIndexValue="999" #property[[k]][[1]]
+      Output$RegionAttributeName="999" #property[[k]][[3]][[1]]
+      Output$RegionAttributeNeighbourhood="999" #property[[k]][[3]][[3]]
+      Output$RegionAttributeID="999" #property[[k]][[3]][[2]]
+    }
+
+  }
+
+  Output
 
 
+
+}
+```
