@@ -3,35 +3,25 @@ library(stats)
 library(rcompanion)
 
 #Obtain Data
-PCAData<-read.table(file="Analysis/Data/EnrichedData",sep=",",header = TRUE)
 Normal<-read.csv(file="Analysis/Data/kc_house_data.csv",sep=",",header = TRUE)
+Enriched<-read.table(file="Analysis/Data/MainData",sep=",",header=TRUE)
 
-#Drop Unwanted Columns
-PCAData2<-PCAData[,c(2,5:9,11,13:15,17,19,25:34,67)]
-
-#Convert Factor to Numeric
-PCAData2$RenovationFlag<-as.numeric(levels(PCAData2$RenovationFlag)=="Yes")[PCAData2$RenovationFlag]
-PCAData2$SeattleFlag<-as.numeric(levels(PCAData2$SeattleFlag)=="Yes")[PCAData2$SeattleFlag]
-
-flag<-as.numeric(irisCluster$cluster)
-
-#Split single floor properteis from rest
-PCADataAll<-PCAData2
-#PCADataAppt<-PCAData2[PCAData2$NumberOfFloors<2,]
-#PCADataHses<-PCAData2[PCAData2$NumberOfFloors>=2,]
-#PCADataCluster<-PCAData2[flag==1,]
+PCAData2<-Enriched[,c("price","NumberOfBedrooms","NumberOfBathrooms","LivingSpace","TotalArea","NumberOfFloors","WaterfrontView","View","YearBuilt",condition)]
 
 #Principal Components
 PComp<-prcomp(PCADataAll,center=TRUE,scale=TRUE)
 
-summary(PComp
-        )
-
-
 # Generate Predicted Data
 PCADataAll2<-predict(PComp,PCADataAll)
 
-#Transform univariates
+#Calculate Generalised Distances
+
+S<-cov(PCADataAll2)
+Sinv<-solve(S)
+d<-rep(0,times=21436)
+
+for (i in c(1:21436)){
+  d[i]<-crossprod(PCADataAll2[i,],crossprod(Sinv,PCADataAll2[i,]))
+}
 
 
-pairs(PCADataAll2[,1:6])

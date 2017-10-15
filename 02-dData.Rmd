@@ -1,6 +1,11 @@
-## Visualising Geospatial data
+## Results
 
-The plots below show the data fields obtained in this way. The plots were created using the sp package in R. It is clear that some neighbourhood properties change significantly by location (eg. number of schools in 1000m). There are also variables which hardly change at all (eg. Number of Liquor Stores).
+
+**Visualisations**
+
+The plots below show the data fields obtained through enrichment. Visualisation seems the most appropriate method for evaluating whether the Enrichment process was a success. Those data fields which do not offer a straightforward interpretation are likely to be unreliable.
+
+Some neighbourhood properties change significantly by location. The north-western region has both the highest number of schools within 1000m  and the highest number of doctors or dentist within 500m. Since there are significant numbers of libraries and public transport connections within this area, I interpret this region as wealthy and near to jobs.
 
 (ref:Geo3) Number of Schools within 1000m by Location
 
@@ -14,28 +19,10 @@ knitr::include_graphics("Analysis/Images/GeoPlotSchools1000m.png")
 knitr::include_graphics("Analysis/Images/GeoPlotDocDent500.png")
 ```
 
-(ref:Geo5) Number of Grocery Stores or Supermarkets within 1000m by Location
-
-```{r Geo5,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
-knitr::include_graphics("Analysis/Images/GeoPlotGroceries1000m.png")
-```
-
 (ref:Geo6) Number of Libraries within 750m by Location
 
 ```{r Geo6,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
 knitr::include_graphics("Analysis/Images/GeoPlotLibraries750m.png")
-```
-
-(ref:Geo7) Number of Liquor Stores within 250m by Location
-
-```{r Geo7,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
-knitr::include_graphics("Analysis/Images/GeoPlotLiquor.png")
-```
-
-(ref:Geo8) Number of Restaurants within 250m by Location
-
-```{r Geo8,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
-knitr::include_graphics("Analysis/Images/GeoPlotRest250m.png")
 ```
 
 (ref:Geo9) Bus or Transit Station within 100m by Location
@@ -44,17 +31,13 @@ knitr::include_graphics("Analysis/Images/GeoPlotRest250m.png")
 knitr::include_graphics("Analysis/Images/GeoBusTransit100m.png")
 ```
 
-(ref:Geo10) Number of Department Stores of Malls withing 750m by Location
+(ref:Geo5) Number of Grocery Stores or Supermarkets within 1000m by Location
 
-```{r Geo10,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
-knitr::include_graphics("Analysis/Images/GeoMallDepartment.png")
+```{r Geo5,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoPlotGroceries1000m.png")
 ```
 
-(ref:Geo11) Average Monthly Rental Value by Location
-
-```{r Geo11,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
-knitr::include_graphics("Analysis/Images/GeoRental1.png")
-```
+Some variables display surprisingly little variation by location. It makes sense that the density of police stations in Figure \@ref(fig:Geo15) is approximately constant throughout the region. This would ensure response police times are consistent.
 
 (ref:Geo15) Number of Police Stations within 1000m
 
@@ -62,30 +45,46 @@ knitr::include_graphics("Analysis/Images/GeoRental1.png")
 knitr::include_graphics("Analysis/Images/GeoPlotPoliceStations1000m.png")
 ```
 
+Department stores and malls are concentrated in a few hot-spots in \@ref(fig:Geo10). This is consistent with large out of town, destination shopping malls common in the USA.
 
-**Other Data**
+(ref:Geo10) Number of Department Stores of Malls withing 750m by Location
 
-It is suprising to find spatial patterns when we plot property specific variables (eg. Construction Year) by location. For example with Construction Year, the oldest properties are located in the north-west region and properties get progressively newer as we move east.
-
-(ref:Geo12) Plot of Property Construction Year by Location
-
-```{r Geo12,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
-knitr::include_graphics("Analysis/Images/GeoPlotConstructionYr.png")
+```{r Geo10,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoMallDepartment.png")
 ```
 
-(ref:Geo13) Plot of Number of Floors by Location
+Figure \@ref(fig:Geo8) shows relatively few eating places in Seattle andfFigure \@ref(fig:Geo7) shows relatively few liquor stores. This seems strange and may indicate that Google's Radar Search does not capture this data reliably.
 
-```{r Geo13,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
-knitr::include_graphics("Analysis/Images/GeoPlotFloorNo.png")
+(ref:Geo8) Number of Restaurants within 250m by Location
+
+```{r Geo8,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoPlotRest250m.png")
 ```
 
-(ref:Geo14) Plot of Number of Bedrooms by Location
 
-```{r Geo14,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
-knitr::include_graphics("Analysis/Images/GeoPlotBedrooms.png")
+(ref:Geo7) Number of Liquor Stores within 250m by Location
+
+```{r Geo7,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoPlotLiquor.png")
 ```
 
-## Code
+Figure \@ref(fig:Geo11) shows that there is relatively little variation in Property Rental Values. This is at odds with common sense. Rental income and property prices should be highly correlated and there are significant variations in property prices within the data. The data obtained from Zillow may be unreliable.
+
+(ref:Geo11) Average Monthly Rental Value by Location
+
+```{r Geo11,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoRental1.png")
+```
+
+**Results**
+
+The enriched data set is found [online](ThesisPublished/Analysis/Data/EnrichedData).
+
+## Code {#Code}
+
+The following custom functions were written to enable Data Enrichment:
+
+**Custom Functions**
 
 The Reverse Geocode function is shown below:
 
