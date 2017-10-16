@@ -2,9 +2,12 @@
 
 # Multivariate Analysis {#Theory}
 
-The following sections on Multivariate Analysis are drawn from @johnson2014applied. The [Key Elements Section](#Analysis1) below draws heavily from Chapters 2 and 3. 
+The following sections on Multivariate Analysis are drawn from @johnson2014applied. The [Key Elements Section](#Analysis1) below draws heavily from Chapters 2 and 3. The [Linear Predictors Section](#LinearPredictor) draws from Chapters 2, 6 and 7. 
 
-##Key Elements of Multivariate Statistics {#Analysis1}
+The aim of these two sections are to establish the key theoretical concepts required to understand the [Multivariate Models](#Models) discussed later. The [Key Elements Section](#Analysis1) defines a Random Sample and presents (without proof) the asymptotic properties of the sample mean and sample covariance matrix.The [Linear Predictors Section](#LinearPredictor) section defines a Linear Predictor Function and the Mean Squared Error criterion for measuring the accuracy of linear prediction functions. This section finishes with an explanation of the link between best linear predictors and the Multiple Correlation Coefficient. 
+
+
+##Key Elements {#Analysis1}
 
 Multivariate statistics is concerned with the properties of multi-dimensional random vectors. We study the properties of the p-dimensional Random Vector $\underset{(p \times 1)}{Z}$, by capturing repeated measurements. For ease of study we arrange these n observations into an n by p data matrix (see @johnson2014applied, page 49):
 
@@ -102,7 +105,7 @@ $\square$
 Since in the limit of large sample sizes the  sampling distribution of $\overline{X}$ is (multivariate) normally distributed, we can apply statistical results developed for Multivariate Normal Random Vectors. For Example, the Multivariate Analysis of Variance Model for comparing g Population Mean Vectors (see @johnson2014applied, chapter 6, page 301, chapter 6)
 
 
-## Linear Predictors
+## Linear Predictors {#LinearPredictor}
 
 In this document, I restrict my attention to "Linear Predictors" of the form shown below. It follows that my predicted response variable will vary continuously with the explanatory variables.
 

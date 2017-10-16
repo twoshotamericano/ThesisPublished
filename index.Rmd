@@ -1,5 +1,5 @@
 --- 
-title: "R Studio: A 3D Printer for Business Analytics"
+title: "Applications of Multivariate Analysis in Business"
 author: "Ed Anderson"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site

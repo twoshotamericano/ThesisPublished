@@ -4,9 +4,9 @@ The following sections on Multivariate Models are drawn from @johnson2014applied
 
 **Estimating Best Linear Predictors**
 
-In practice, the models we use to estimate the best linear predictor make assumptions in addition to the population mean and covariance being finite. These assumptions vary from model to model. One practical reason for this is we do not have access to the population mean $\mu$ and covariance matrix $\Sigma$, but rather must make inferences based on sample estimates using the data available.
+In practice, the models we use to estimate best linear predictors make assumptions in addition to the population mean and covariance being finite. These assumptions vary from model to model. One practical reason for this is we do not have access to the population mean $\mu$ and covariance matrix $\Sigma$, but rather must make inferences based on sample estimates using the data available.
 
-In the subsequent chapters I want to investigate the best linear predictor of a response variable using three different Multivariate Techniques. My general objective is to end up with models with a limited number of factors (ie. data reduction) that offer significant insights into the data (ie ease of interpretation) and are technically sound (ie. statistical model fitting and selection).
+In the subsequent [Data](#Data) and [Analysis](#ProfileAnalysis) chapters, I want to investigate the best linear predictor of a response variable using four distinct Multivariate Techniques. My general objective is to end up with models with a limited number of factors (ie. data reduction) that offer significant insights into the data (ie ease of interpretation) and are technically sound (ie. statistical model fitting and selection).
 
 As we shall see each approach emphasises a different aspect of the sample data. The Classical Linear Regression approach focuses on the sample mean, the Principal Component Analysis approach emphasises the sample covariance matrix and Factor Analysis is a mixture of both. 
 

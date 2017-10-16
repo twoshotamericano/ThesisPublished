@@ -1,10 +1,12 @@
 # (PART) Data {-}
 
+
+# Original Data {#Data}
+
 I am interested in applying multivariate analysis to understand the factors affecting property prices. To do this, I sourced  a property data-set from the website @kaggle1 . The original data-set contained sale prices and property details for 21613 residential property sales between May 2014 and May 2015 in King County USA (includes Seattle).
 
 To discover which variables, not included in the data-set, are known to influence property prices I conducted a literature search. This identified potential gaps and I performed significant data enrichment through writing custom R code to extract data from online data providers. The Enriched data set includes local area information from the Google Maps and Google Radar Search API services. For financial information such as rental values, the ENriched Data set contains data from the Seattle based real estate and rental marketplace [Zillow](https://www.zillow.com/corp/About.htm).  
 
-# Original Data {#Data}
 
 ## Data Source
 
@@ -213,74 +215,4 @@ In Figure \@ref(fig:Geo13) we see that the average number of multi-storey proper
 knitr::include_graphics("Analysis/Images/GeoPlotFloorNo.png")
 ```
 
-
-#Enriched Data 
-
-## Literature Review
-
-The original data set only included information on the intrinsic characeteristics of a property. For example there were no variables pertaining to the neighbourhood of a property nor to macroeconomic conditions (eg. the state of the mortgage market, unemployment levels,National and local government policies, demographics etc).
-
-Using only the original data could result in biased parameter estimates or the significance level of a variable being overstated. For example, the data comes from the period from May 2014 to May 2015 when the external environment in the US was relatively stable. This means that the level of noise in the data could be artificially low and the explanatory power of micro variables such as bedroom number overstated.
-
-An online literature search helped to mitigate this risk and identified variables which previous research studies found to be significant predictors of property price. The table below shows the variables identified, the reference article and the matching field in the database. Article 1 is [@galati2011macro], Article 2 is [@candas2015], Website 1 is [@rightmove]
-
-|Micro-variable         | Reference | Original Data-Set Field  |
-|-----------------------|:---------:|--------------------------|
-|Year of Construction   | Article 1 |Construction Year         |
-|Size of Living Room    | Article 1 |Living Space              |
-|Presence of Garage     | Article 1 |Missing                   |
-|Presence of Garden     | Article 1 |Lot Size                  |
-|Type of House          | Article 1 |Number of Floors          |
-|Large City vs not large| Article 1 |Missing                   |
-|Degree of Urbanization | Article 1 |Missing                   |
-|Floor No               | Article 2 |Floors                    |
-|Heating System         | Article 2 |Renovation Year           |
-|Earthquake Zone        | Article 2 |Not relevant              |
-|Rental Value           | Article 2 |Missing                   |
-|Land Value             | Article 2 |Missing                   |
-|Parcel Area            | Article 2 |Total Area                |
-|Zoning                 | Article 2 |Zipcode                   |
-|Proximity to Amenities | Website 1 |Missing                   |
-|Number of Bedrooms     | Website 1 |Bedrooms                  |
-|Number of Bathrooms    | Website 1 |Bathrooms                 |
-|Condition of Interior  | Website 1 |Condition/Grade           |
-
-
-## Enrichment Process
-
-The original data is missing a number of fields which the literature search flagged as important. In particular Proximity to Amenities, Rental Value, Large City vs not large. Some of these could simply be calculated from the original data. For example, since Seattle was the only large city in King County, "Large City vs Not Large" can be calculated using the zipcode data field and a list of Seattle zipcodes. 
-
-Many of the missing data fields could not be calculated from the original data. Correspondingly I wrote custom R functions to retrieve additional fields from online data providers. Conducting significant volumes of "API calls" for free is a fiddly computational exercise. The code needs to handle error messages and parse results automatically. Furthemore, data providers typically place free usage limits of 1000 API calls per day and this needed to be circumvented to enrich my 21613 records!
-
-The first step to using an API data-service is to obtain an Access Token from the data service. This can only be done manually by visiting the developer pages of the service's website and supplying user details (eg. email address). Access Tokens typically do not expire but do have usage limits of 1000 calls per day. By supplying Credit Card details to verify my identity I was able to increase my daily limit on Google to 50000 calls.
-
-**Reverse Geocoding**
-
-Each data-service requires a particular set of input information to be supplied to the server in a specified format. Unfortunately Zillow required the full property address as an input and this was not contained in the original data. Therefore before starting with data-enrichment I wrote the ReverseGeo function to reverse geocode my data (see [Code Section](#Code)). Using this function, I looped through the 21613 records and by suppling latitute and longitude information, I obtained the full address details. To check that this process completed without error, I identified 10 properties randomly in the data and checked on google maps that the same building was identified using first lat/long information and then full address.
-
-**Radar Search**
-
-Having gotten the full address for each property, I used the Google Radar Search API to return places of interest near each property. Unfortunately to obtain the 10 data fields below, I had to loop through the entire data set over 10 times (once per data field). This exceeded my daily usage limit and I needed to create multiple access tokens to circumvent any access  Again, to check that this process completed without error, I identified 10 properties randomly in the data and checked on google maps that their neighbourhood contained the places of interest identified by the Radar API.
-
-
-|Micro-variable                   | Source | Description                                            |
-|---------------------------------|:------:|--------------------------------------------------------|
-|Restaurants250m                  | Google |Number of Restaurants within 250m                       |
-|Schools1000m                     | Google |Number of Schools within 1000m                          |
-|PoliceStation1000m               | Google |Number of Police Stations within 1000m                  |
-|SuperMarketGrocery750m           | Google |Number of Supermarkets or Grocery Stores within 750m    |
-|Library750m                      | Google |Number of Libraries within 750m                         |
-|LiquourStore250m                 | Google |Number of Liquour Stores within 250m                    |
-|DoctorDentist250m                | Google |Number of Doctor or Dentists within 250m                |
-|DepartmentStoreShoppingMall750m  | Google |Number of Department Stores or Shopping Malls with 750m |
-|BusTrainTransitStation100m       | Google |Number of Bus or Transit Stations within 100m           |
-|BarNightclubMovie500m            | Google |Number of Bars, Nightclubs or Movie Theatres within 500m|
-
-**Zillow Search**
-
-Finally, I used the Zillow API to obtain information on the rental value of properties. The results from API calls to Zillow were in a hierarchical XML format and needed to be tidied significantly before they could be analysed. Occasionally the XML format of the result set changed and I needed to write the function in figure \@ref(fig:ZillowSearch) to automate result retrieval. Using this tidying function, I was able to add the following fields to each property in the data-set:
-
-|Micro-variable                   | Source | Description                                            |
-|---------------------------------|:------:|--------------------------------------------------------|
-|RZEstimateAmount                 | Zillow |Monthly Rental Charge Estimatefor the Property          |
-
+## Factor Analysis

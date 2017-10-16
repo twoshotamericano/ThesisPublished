@@ -5,7 +5,7 @@ bookdown::gitbook:
       collapse: section
       scroll_highlight: yes
       before: |
-        <li><a href="./">Business Analytics with R Studio</a></li>
+        <li><a href="./">Applications of Multivariate Analysis</a></li>
       after: |
         <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
     edit: null
