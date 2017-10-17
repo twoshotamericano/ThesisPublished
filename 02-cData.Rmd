@@ -3,12 +3,10 @@
 
 # Original Data {#Data}
 
-I am interested in applying multivariate analysis to understand the factors affecting property prices. To do this, I sourced  a property data-set from the website @kaggle1 . The original data-set contained sale prices and property details for 21613 residential property sales between May 2014 and May 2015 in King County USA (includes Seattle).
-
-To discover which variables, not included in the data-set, are known to influence property prices I conducted a literature search. This identified potential gaps and I performed significant data enrichment through writing custom R code to extract data from online data providers. The Enriched data set includes local area information from the Google Maps and Google Radar Search API services. For financial information such as rental values, the ENriched Data set contains data from the Seattle based real estate and rental marketplace [Zillow](https://www.zillow.com/corp/About.htm).  
+I am interested in applying multivariate analysis to understand the factors affecting property prices. To do this, I sourced  a property data-set from the website @kaggle1 which is discussed in the [Data Source](#OriginalData) section. The original data-set contained sale prices and property details for 21613 residential property sales between May 2014 and May 2015 in King County USA (includes Seattle). In the [Data Source](#OriginalData) section I use a range of plots to perform an in-depth exploratory analysis. Detecting Outliers and Errors is discussed in the [Outliers and Errors](#ErrorsOriginalData) Section. Multivariate techniques such as a Principal Component Decomposition and a Multivariate Clustering Technique are applied. The Original Data section closes with a novel use of [Factor Anaylsis](#FactorAnalysis) to explore hidden relationships in the data. 
 
 
-## Data Source
+## Data Source {#OriginalData}
 
 The original data can be found on my GitHub site ([Source Data](ThesisPublished/Analysis/Data/kc_house_data.csv)). The data comprises a table with 21613 rows (one per property sale) and 19 columns of explanatory variables. Descriptions of each data column is shown below. The fields containing categorical data as opposed to numeric (discrete or continuous) are also identified. The absence of information for a particular property, in a particular field was encoded with a blank.
 
@@ -106,7 +104,7 @@ knitr::include_graphics("Analysis/Images/Exploratory6.jpg")
 ```
 
 
-## Outliers and Errors
+## Outliers and Errors {#ErrorsOriginalData}
 
 For large, multivariate data sets it is harder to search for individual outliers and errors. Visual inspection of the data table is tedious and unreliable. Through sorting the property ID's, I was able to identify that a small number of properties appears multiple times in the data. This comes about due to a single property being sold more than once during within the data collection period. For my analysis, I chose to retain only the most recent transactional record for properties with multiple appearances. This process reduced the size of the data-table from 21613 to 21436 rows.
 
@@ -183,7 +181,9 @@ If the multivariate normal assumption were appropriate and p=12, we would expect
 
 I used the R package sp to plot the c.21000 individual properties onto a map and then to visualise how their properties vary spatially. This deepens our understanding of the data and the relationships within. 
 
-For reference purposes, the data-set is plotted without aggregation in figure \@ref(fig:Geo0). The dark red points are high value properties and the white dots low value properties. The large dark blue region in the east of the photo is an inlet to the Pacific Ocean and the dark blue region in the centre of the plot is a lake.It is clear from the "green" colour of the relief in the eastern and central regions that these areas are less densely urbanised.
+The first 200 pages of [@bivand2008applied] are give a detailed practical guide to using the sp package. Objects of Spatial Class are enriched with a range of useful functions in sp. The plot in  figure \@ref(fig:Geo0) was created by merging my original data set with an image file from Google Maps. The transform function was used to transform both data sets to the same elliptical co-ordinate system (WGS 84) with the same centring parameters. My original data was then converted to a Spatial Points data frame. The Google Maps file was a Raster Image, essentially a grid of points, each with a latitude and longitude reference and a value for each Red, Green, Blue Colour levels. The image in \@ref(fig:Geo0) is a graph  created by layering the three data fields "Red", "Green", "Blue" plus my property locations according to a grid reference.
+
+The data-set is plotted without aggregation in figure \@ref(fig:Geo0). This means I did not rasterise the spatial points data frame. The dark red points are high value properties and the white dots low value properties. The large dark blue region in the east of the photo is an inlet to the Pacific Ocean and the dark blue region in the centre of the plot is a lake.It is clear from the "green" colour of the relief in the eastern and central regions that these areas are less densely urbanised.
 
 (ref:Geo0) Individual points plotted without aggregation
 
@@ -215,4 +215,4 @@ In Figure \@ref(fig:Geo13) we see that the average number of multi-storey proper
 knitr::include_graphics("Analysis/Images/GeoPlotFloorNo.png")
 ```
 
-## Factor Analysis
+## Factor Analysis {#FactorAnalysis}
