@@ -1,6 +1,13 @@
 #Enriched Data {#EnrichedData}
 
-To discover which variables, not included in the data-set, are known to influence property prices I conducted a [literature search](#Literature). This identified potential gaps and I performed significant data enrichment which I documented in the [Enriched Data](#EnrichedData) Section. In the [Enrichment Process](#EnrichmentProcess) Section, I talk through the custom R [code](#Code) which I wrote to extract data from online data providers. The Enriched data set includes local area information from the Google Maps and Google Radar Search API services. For financial information such as rental values, the ENriched Data set contains data from the Seattle based real estate and rental marketplace [Zillow](https://www.zillow.com/corp/About.htm). In the [Results](#EnrichmentResults) subsection I present and evaluate the Enriched Data set using geospatial plots. The Enriched Data section closes with a novel use of [Canonical Correlation Analysis](#CanonAnalysis) to evaluate whether the enriched data set contains "new" information in comparison with the original.
+
+To discover which variables, not included in the data-set, are known to influence property prices I conducted an online literature search. In the [Literature Search](#Literature) subsection, I detail the results. 
+
+My literature search identified potential gaps in the Original Data and I performed a significant data enrichment process. This process is documented in the [Enrichment Process](#EnrichmentProcess) subsection, where I talk through the custom R code which I wrote to extract data from online data providers.
+
+The Enriched data set includes local area information from the Google Maps and Google Radar Search API services. For financial information such as rental values, the ENriched Data set contains data from the Seattle based real estate and rental marketplace [Zillow](https://www.zillow.com/corp/About.htm). In the [Results](#EnrichmentResults) subsection I present and evaluate the Enriched Data set using geospatial plots. 
+
+The Enriched Data section closes with a novel use of [Canonical Correlation Analysis](#CanonAnalysis) to evaluate whether the enriched data set contains "new" information in comparison with the original.
 
 ## Literature Review {#Literature}
 

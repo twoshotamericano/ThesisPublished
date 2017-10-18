@@ -4,7 +4,7 @@
 
 The following sections on Multivariate Analysis are drawn from @johnson2014applied. The [Key Elements Section](#Analysis1) below draws heavily from Chapters 2 and 3. The [Linear Predictors Section](#LinearPredictor) draws from Chapters 2, 6 and 7. 
 
-The aim of these two sections are to establish the key theoretical concepts required to understand the [Multivariate Models](#Models) discussed later. The [Key Elements Section](#Analysis1) defines a Random Sample and presents (without proof) the asymptotic properties of the sample mean and sample covariance matrix.The [Linear Predictors Section](#LinearPredictor) section defines a Linear Predictor Function and the Mean Squared Error criterion for measuring the accuracy of linear prediction functions. This section finishes with an explanation of the link between best linear predictors and the Multiple Correlation Coefficient. 
+The aim of these two sections is to establish the key theoretical concepts required to understand the [Multivariate Models](#Models) discussed later. The [Key Elements Section](#Analysis1) defines a Random Sample and presents (without proof) the asymptotic properties of the (multivariate) sample mean and sample covariance matrix.The [Linear Predictors Section](#LinearPredictor) section defines a Linear Predictor Function and the Mean Squared Error criterion for measuring the accuracy of linear prediction functions. This section finishes with an explanation of the link between best linear predictors and the Multiple Correlation Coefficient. 
 
 
 ##Key Elements {#Analysis1}
