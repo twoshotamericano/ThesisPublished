@@ -2,16 +2,6 @@
 
 # Interactive {#Interactive}
 
-**Model**
-Have a go at model fitting
-
-```{r,echo=FALSE, warning=FALSE}
-library(webshot)
-library(knitr)
-
-knitr::include_app("https://twoshotamericano.shinyapps.io/datavisual/", height="600px")
-
-```
 
 **Enrichment**
 

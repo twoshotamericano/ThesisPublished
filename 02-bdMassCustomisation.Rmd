@@ -1,6 +1,4 @@
-# (PART) Section 2 {-}
-
-# Business Analytics in R Studio {#RBusinessAnalytics}
+## Business Analytics Applications {#RBusinessAnalytics}
 
 Mass Customisation in Business Analytics is about delivering impactful insights on a tight time budget. Instead of staring at our shoes in despair when Business Managers request extra support at the last minute, with Mass Customisation, we can deliver!
 

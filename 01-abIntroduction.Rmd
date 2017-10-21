@@ -1,86 +1,51 @@
-# Microsoft Problems {#MicrosoftProblems}
+# Introduction 
 
-We now know what Mass Customisation is. It is about the mass production of customised goods and services. It treats each customer as a separate market and through advanced Technology, each individual order is produced using a customised production set-up. But what we don't know yet is how to unlock the possibilities of "Mass Customisation" in Business Analytics? We also don't know why R Studio is the special technology for doing this.
+There are two key ideas in this Dissertation. The Application of Multivariate Analysis techniques to Business Analytics and the empowerment of Analysts to build and publish their own Analytics Software Tools. To weave both themes together, I use an illustrative Business Problem. 
 
-In this section I want to follow the thought process of the conservative (dare I say lazy) IT Manager and demonstrate that there is no way you are going to achieve Mass Customisation with Microsoft Software. 
+My illustrative problem is to develop an Analytics Tool that accurately predicts a Property's Value. There are some very bad property price estimation tools in commercial use. I have documented one such tool in a Case-study at the end of the text. In subsequent chapters I aim to demonstrate that a high performance Analytical tool integrating Statistical and SOftware Elements is easily obtained.
 
-**A Theoretical Look at the Microsoft Product Suite**
+## Document Structure
 
-Microsoft has organised its Business Software using a modular strategy. Each unit (or module) of software performs a distinct function and is designed to operate both independently but also in an integrated whole if needed. This is achieved through providing high quality interfaces between modules, enabling easy connection and communication.
+This document is organised with a linear flow that mirrors the Structure of an Analytics Project. After a Theory Section providing a summarised introduction to Multivariate Analysis, Data Analysis is performed. Subsequently a model is selected to describe the features in the data. Finally a software tool is published containing the model selected.
 
-Microsoft's product strategy is not the same for each software module. On the one side, Microsoft offers its Office Products (eg. Excel, Word, Powerpoint, Access) using a Low Cost strategy to ensure mass market appeal and affordability. On the other side, Microsoft offers a suite of Advanced Analytics Products (eg. SQL Management Studio, Analysis Services, Reporting Services...) using a Differentiation Strategy to deliver enhanced features but at significant additional cost to the user.
+[MATHEMATICAL THEORY](#Theory)
 
-So if a customer needs an Excel based tool with functionality to analyse data in an online transactional database, both Low Cost and High Cost modules must be purchased. If we analyse this approach using the trade-off curves of the previous section it is obviously not mass customisation (see figure \@ref(fig:Microsoft1)):
+The Mathematical Theory section starts by establishing the key theoretical concepts required to understand Multivariate Models. The Key Elements Section defines a Random Sample and presents (without proof) the asymptotic properties of the (multivariate) sample mean and sample covariance matrix. The Linear Predictors Section section defines a Linear Predictor Function and the Mean Squared Error criterion for measuring the accuracy of linear prediction functions.
 
-(ref:Microsoft1) Performance trade-offs using Microsoft
+Subsequently I introduce the analytical properties of four distinct Multivariate Techniques which will be applied in subsequent chapters. Each technique emphasises a different aspect of the sample data. The Classical Linear Regression approach focuses on the sample mean, the Principal Component Analysis approach emphasises the sample covariance matrix, Factor Analysis and Canonical Correlation Analysis is a mixture of both.
 
-```{r Microsoft1,echo=FALSE, fig.cap='(ref:Microsoft1)'}
-knitr::include_graphics("Analysis/Images/Microsoft1.png")
-```
+[ECONOMIC THEORY](#MassCustomisation)
 
+Here I introduce the concept of Mass Customisation and describe its application to Business Analytics. In general terms, Mass Customisation is about the mass production of customised goods and services. It treats each customer as a separate market and through advanced Technology, each individual order is produced using a customised production set-up. 
 
-In words, the Microsoft modular approach meets enhanced customer requirements by moving from one generic performance frontier to another. There is no customised performance frontier for the new product and there is no customisation to the production process. This is not Mass Customisation.
+[DATA](#Data)
 
-**A Practical Case Study of Microsoft Analytics in Action**
+The data section is split in two parts.
 
-The key theme of this thesis is that we need R Studio to unlock "Mass Customisation" in Business Analytics.We've seen that Microsoft uses a modular system for its Business Software, relying on high quality interfaces to ensure interoperability. We have also seen that this is conceptually different to Mass Customisation. In this section we will see an example of why this difference matters!
+[ORIGINAL DATA](#OriginalData)
 
-Whilst not every Microsoft analytics tool looks like what follows. I am putting this tool under the spotlight as a "best in class" Microsoft product. Why? Well, if you imagine a financial services company making a huge amount of cash and employing over 2000 analysts, then its models should be be pretty high quality. Right?
+I am interested in applying multivariate analysis to develop an Analytics tool which predicts property prices. To do this, I sourced  a property data-set from the website @kaggle1. I call this the original data set. 
 
-**Background to the Case Study**
+I start by presenting the original data-set which contains sale prices and property details for 21613 residential property transactions between May 2014 and May 2015 in King County USA (includes Seattle). 
 
-So the Case Study I want to guide you through goes something like this. A mortgage is a very large loan made by a lending business to individuals purchasing a home. The mortgage typically represents 3-5 times the salary of the borrower and can take up to 50 years to repay! Investors in mortgage lending businesses are clearly motivated to make sure these repayments happen. To this end, they can obtain a financial health check from a Rating Agency. What has this got to do with Microsoft Analytics tools?
+I perform significant exploratory analysis in addition to Multivariate Clustering to detect ouliers, a MANOVA technique for Profiling Segments of Properties and Factor Analysis to investigate "hidden" variables.
 
-One of the "Big Three Credit Ratings Agencies" a company called Fitch Ratings Inc developed a health check tool [@FitchModel]. They wanted to provide a free-to-download tool that runs on the Microsoft Excel desktop-package. Their objective was to make the tool perform the complex calculations so that the user can focus on their investment questions: can the customer afford to repay his loan and what is the resale value of the property. 
+[ENRICHED DATA](#EnrichedData)
 
-**Description of the Tool**
+To discover which variables, not included in the data-set, are known to influence property prices I conducted an online literature search. In the [Literature Search](#Literature) subsection, I detail the results. Potential gaps in the Original Data were identified and I performed a significant data enrichment process. This process is documented in the [Enrichment Process](#EnrichmentProcess) subsection.
 
-On its website Fitch describes its tool as [@FitchModel2],[@FitchModel3]:
+Following significant exploratory analysis using Geospatial plots, I use Canonical Correlation Analysis to investigate the degree of overlap between the Enriched and the Original Data set.
 
--    The tool provides "An Analytical model that helps with the risk assessment of Residential Mortgage loans". 
--    The "sustainable home price model" is used to determine the true value of a property. A sustainable long-term house price is calculated based on six key drivers identified through regression analysis on a data-set from 1976-2011 .
--    The "Probability of Default model" uses a regression-based analysis to estimate the probability that a customer stops making payments. There are 13 independent variables in the model, 11 individual loan and borrower attributes and one related to economic risk factors. The model is based on data from 1991-2009.
+[MODEL SELECTION](#ModelSelection)
 
-When you click download, you'll get a zip file containing how-to documentation and two Microsoft Excel files containing the tool (see figure \@ref(fig:ResiEMEA1)). 
+Model Selection starts with a short literature review of Geospatial models. I then perform a hypothesis test using Linear Regression to determine, given the data set, whether it is worthwhile pursuing sophisticated geospatial models.
 
-(ref:ResiEMEA1) A screenshot of what the downloaded .zip file contains. Figure a.) Shows the individual files including user guides but also two excel tools. b.) The Datatape tool c.) The data template and d.) The Model tool
+This section closes by fitting a Multivariate linear regression model.
 
-```{r ResiEMEA1,echo=FALSE, fig.cap='(ref:ResiEMEA1)'}
-knitr::include_graphics("Analysis/Images/ResiEMEA1.png")
-```
+[EXAMPLE DATA](#Tool)
 
-**How the tools works**
+This section builds the statistical model identified in the Model Selection chapter into an Interactive Analytics Tool.
 
-Whilst the download does contain easy to read documentation, the tool guides the user through the analysis in a self-explanatory way using a pop-up "wizard" application.
+[CONCLUSIONS](#Conclusions)
 
-As with all calculation engines, Fitch's tool requires data in a specific format. If you look at the figures xx xx, you will see a number of data validation and certification steps. This is actually the reason why a pop-up wizard was required (see figure \@ref(fig:ResiEMEA2)). 
-
-(ref:ResiEMEA2) Screenshots of the wizard guiding the user through four data validation steps
-
-```{r ResiEMEA2,echo=FALSE, fig.cap='(ref:ResiEMEA2)'}
-knitr::include_graphics("Analysis/Images/ResiEMEA2.png")
-```
-
-I mentioned above that there are two key models in the tool. The "sustainable home price model" calculates property resale values. In figure \@ref(fig:ResiEMEA3) you'll see an example calculation:
-
-(ref:ResiEMEA3) Screenshot of the resale value calculation
-
-```{r ResiEMEA3,echo=FALSE, fig.cap='(ref:ResiEMEA3)'}
-knitr::include_graphics("Analysis/Images/ResiEMEA3.png")
-```
-
-This is clearly not a "regression model" using six factors. It is an accounting based calculation with just three adjustments! What has gone wrong!?
-
-**Observations**
-
-The critical flaw in this tool is the need to include a "wizard". Unfortunately there is no inbuilt, customisable "wizard" within any Microsoft products to guide users through a process. 
-
-To create one, an enhancement must be built by software developers. For sure the professional looking and robust tool is a credit to the quality of the software team. However this must have been an expensive and slow process! In the mix it looks like the the calculation engine became highly simplified and may no longer meet the needs of the tool's users. 
-
-In pictures (see figure \@ref(fig:Microsoft2)), we have the needs of the customer falling beyond the capabilities of the modular system. Consequently as with traditional Operations Strategy, significant cost is involved to customise the production of the tool. This is not Mass Customisation at work!!
-
-(ref:Microsoft2) Trade-off diagram for this tool
-
-```{r Microsoft2,echo=FALSE, fig.cap='(ref:ResiEMEA3)'}
-knitr::include_graphics("Analysis/Images/Microsoft2.png")
-```
+This contains concluding remarks and recommendations for nexts steps.

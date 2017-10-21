@@ -1,4 +1,6 @@
-# A Prologue {-}
+# (PART) Introduction {-}
+
+# Prologue {-}
 
 Good Morning! How are you doing? It's been great being part of the Analytical Community the last few years hasn't it? The excitement is everywhere about "big-data","data-science","MOOCs". I have been blown away by the talent being attracted into Analytics.One current trend is 'a shift from a desire to work for bigger name brand companies like Facebook or Google, to more mission-driven organizations attempting to make an impact on society. Whether it is curing cancer, conserving energy, tracking infectious disease or personalizing education, more data scientists are becoming interested in trying to make the world a better place' [@nuggets].
 
@@ -16,9 +18,13 @@ The interested reader is referred to [@johnson2014applied] for a concise introdu
 
 It is an unfortunate truth, especially from a Mathematical Perspective, that solving Business Analytics problems requires more than a careful statistical analysis. For example data needs to be extracted from disparate Software Systems and Analytical results need to be published to the Business as re-usable Analytical Tools. In large businesses, the responsibility for this lies with the IT department.
 
-It is my contention however that relying on a non-statisticatian, Software Developer to translate Analytical Projects into code is fraught with danger. The resulting Analytics Tool is usually a significant simplification of the initial analysis. This is a consequence of time spent training the developer and accomodating additional testing.
+It is my contention however that relying on a non-statistician, Software Developer to translate Analytical Projects into code is fraught with danger. The resulting Analytics Tool is usually a significant simplification of the initial analysis. This is a consequence of time spent training the developer and accomodating additional testing.
 
 In this document I explore the innovative R Studio technology as a solution to the Analytics Tool development problem. For me, R Studio is a 3D printer for Analytics projects. It empowers the Analyst to perform both statistically rigorous analyses but also to act as a developer and publish results in customised, interactive tools. As a demonstration of the capabilities of R Studio, this document has been written entirely from within R and publised as a website. It includes not only advanced statistical analyses and visualisations but also customised, interactive Analytics tools. 
+
+There are two key ideas in this Disseration which I consider original. The first is to take the perspective of the Business Analyst when discussing Statistical Methods. The reality is that Analytical teams in Business act mainly as "Digital Controllers". They assist in the selection and evaluation of new cutting edge technologies and leave technology development to specialist 3rd party vendors. Business Analysts do not require cutting edge Machine Learning skills. They do however need to apply certain Mutlivariate Analysis techniques to successfully perform a technology selection and evaluation role. I discuss several of these key techniques in my Disseration.
+
+The second innovation is to identify "empowering the Analyst to build and publish his own Analytics tools" as a novel example of Mass Customisation. Mass Customisation is a new and exciting concept from Operations Strategy which is taught in leading Business Schools. It has the potential both to radically reduce the cost of delivering customised Software Tools but also increase the degree of customisation. At the time of writing, purchasing a new Analytics Tool for Insuranace often costs in excess of €500k and a data enrichment service provider may quote €100k for an initial evaluation. This is way too expensive and motivates my detailed exploration of the R Studio system as a way to achieve Mass Customisation in Business Analytics.
 
 I would like to dedicate my thesis to Sir Walter Tyrell of England. Misadventure is a part of everyone's life but not many people accidentally kill a king!!! The tree responsible is still alive in the New Forest in England!
 

@@ -1,4 +1,4 @@
-# (PART) Theory {-}
+# (PART) Mathematical Theory {-}
 
 # Multivariate Analysis {#Theory}
 
@@ -83,7 +83,7 @@ $\square$
 
 Similar to when dealing with univariate random variables, certain "regularities" govern the sampling distribution of $\overline{X}$ and $S$ (see @johnson2014applied, page 175, section 4.5). These results are repeated without proof below:
 
-```{proposition, name="Large Sample Properties of Sample Mean and Covariance"}
+```{proposition, largesample, name="Large Sample Properties of Sample Mean and Covariance"}
 Let $X_{1},X_{2},...,X_{n}$ be a random sample from a population with $E[X]=\mu$ and finitie, non-singular $Cov[X]=\Sigma$.
 
 As the number of measurements $n$ increases without bound and in any case $n \gg p$:

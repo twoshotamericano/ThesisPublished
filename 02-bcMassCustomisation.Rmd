@@ -1,12 +1,14 @@
+# (PART) Economic Theory {-}
+
 # Mass Customisation {#MassCustomisation}
 
-**Mass Customistion**
+## Theoretical Concept
 
 Mass Customisation is a powerful idea taught at leading business schools across the World. I was introduced to the concept over a coffee in Munich by a Graduate Student in Logistics from the Netherlands! It runs like this. A century ago, economies of scale in Manufacturing Processes brought down the price of mass-produced goods to the extent that customers were willing to trade-off their individual preferences for a cheap but standardized mass-produced good [@harvard]. Nowadays, new forms of organisation and technology are radically reducing this trade-off between individuality and cost [@lewis2002operations]. Thus enabling Mass Production of Customised Goods/Services, so called "Mass Customisation".
 
 The key idea is to use customisable technology. This means each individual order is produced by technology customised to the customer's individual needs. In the traditional approach all orders for a given product are produced using the same technology. As we'll see below, this massively increases the influence of performance trade-offs and meeting the customer's needs becomes a compromise.
 
-**Operations Strategy Concept**
+**Operations Strategy**
 
 Mass Customisation is an extreme form of Operations Strategy. A holistic approach to running a business that has a particular meaning in business schools. Its key idea is that Businesses can improve performance by looking for markets where there is both a new product opportunity AND this product is something they can produce exceptionally well.
 

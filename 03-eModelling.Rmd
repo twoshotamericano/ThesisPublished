@@ -1,0 +1,22 @@
+# (PART) Modelling {-}
+
+# Model Selection {#ModelSelection}
+
+## Literature Review {#ModelLiterature}
+
+## MANOVA {#MANOVA}
+
+# (PART) Analytics Tool {-}
+
+# Example Tool {#Tool}
+
+**Model**
+Have a go at model fitting
+
+```{r,echo=FALSE, warning=FALSE}
+library(webshot)
+library(knitr)
+
+knitr::include_app("https://twoshotamericano.shinyapps.io/datavisual/", height="600px")
+
+```

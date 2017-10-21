@@ -129,7 +129,9 @@ knitr::include_graphics("Analysis/Images/Scree.png")
 ```
 
 
-Unfortunately, there are a large number of discrete variables in the data whose co-ordinates contribute significantly to the first 5 eigenvectors. As can be seen in the summary table below, number of bedrooms and condition are two of the biggest components in eigenvector 3. This means that the bivariate scatter plots in figure \@ref(fig:OutliersPCA3) do not resemble the smooth ellipses expected of Multivariate Normal Data.
+The co-ordinates of the first 5 eigenvectors are shown in the summary table below. The first principal component (PC1) has positive components for almost all variables and places most weight on the number of bathrooms, the size of the living space, the price and the number of bedrooms. I interpret this principal component as a Market Index, measuring the base-line value of a property. 
+
+The second principal component (PC2) contrasts properties with scarce features in the data versus those with common features. High Property price, Condition, View or Waterfront are given large negative weight. Year Built and Floors have large positive weight. In this manner I interpret the second Principal Component as being a Scarcity/Uniqueness Index. 
 
 (ref:OutliersPCA2) The components of the first 10 eigenvectors of the Sample Covariance matrix.
 
@@ -164,7 +166,13 @@ for (i in c(1:21436)){
 
 PComp$rotation[,1:5]
 
+
 ```
+
+The bivariate scatter plots of the first five principal components are shown in Figure \@ref(fig:OutliersPCA3). By inspection of the many scattered points towards the top of the first row of charts, it is clear many properties have unusually high values for PC1. This is consistent with the upper-tail of high priced properties in figure \@ref(fig:Outliers1) and I flagged all points with PC1 values above 10.5 as outliers.
+
+In the second row of charts in Figure \@ref(fig:OutliersPCA3), there is a distinct cluster of points away from the main data cloud. This cluster of points is characterised by very low values for the Second Principal Component (PC2). I flagged all points with PC2 values below -6 as outliers, treating very high values for the "uniqueness" index similarly to very values for the "Market" Index PC1.
+
 
 (ref:OutliersPCA3) Bivariate plots of the PCA coordinate values. The distinct groups visible in all plots involving Principal Component 3 are due to discreteness in the data.
 
@@ -176,12 +184,40 @@ knitr::include_graphics("Analysis/Images/PCAPairs.png")
 ```
 
 
-If the multivariate normal assumption were appropriate and p=12, we would expect 5% of observations to have a generalised distance above 19.7. In fact in this data set 8% of observations lie above this. Nevertheless these were flagged as outliers.
+The procedure above removed 151 outliers points. Correspondingly, the bivariate scatter plots in figure \@ref(fig:OutliersPCA3) begin to resemble the smooth ellipses expected of Multivariate Normal Data. 
 
 
-**GeoSpatial Analysis**
+(ref:OutliersPCA4) Bivariate plots of the PCA coordinate values with outliers removed. 
 
-To deepen my understanding of the data and the relationships within, I used the R package sp to plot the c.21000 individual properties onto a map. The first 200 pages of [@bivand2008applied] give a detailed practical guide to using the sp package for further research. 
+```{r OutliersPCA4,echo=FALSE, fig.cap='(ref:OutliersPCA4)',fig.align='center'}
+
+knitr::include_graphics("Analysis/Images/OutliersRemoved.png")
+
+
+```
+
+
+If the multivariate normal assumption were appropriate and p=10, we would expect 5% of observations to have a generalised distance above 16.92. In fact in this data set 16% of observations lie above this.
+
+We begin to understand why this has occurred by applying a Clustering Algorithm. The scatter plots in Figure \@ref(fig:OutliersPCA5) were generated using using the mcclust package in R to fit a Mixture of Normal Distributions . The BIC criteria Value is significantly higher for a mixture of three (Equal Covariance) Multivariate Normal Distributions than for a single distribution.It is this heterogeneity in the data which makes the scatter plots in Figure \@ref(fig:OutliersPCA3) more disparate than otherwise.
+
+Since according to Figure \@ref(fig:OutliersPCA5), outliers would still lie far from the centre of the data cloud, I used the 1% critical value of the $\chi_{9}^2$ distribution to flag the outermost data points as outliers. In this manner 563 additional data points (2.6% data) were flagged as outlying.
+
+(ref:OutliersPCA5) Bivariate plots of Normal Mixture Model with three clusters each of equal Covariance.
+
+```{r OutliersPCA5,echo=FALSE, fig.cap='(ref:OutliersPCA4)',fig.align='center'}
+
+knitr::include_graphics("Analysis/Images/Clustering1.png")
+
+
+```
+
+
+
+
+**GeoSpatial Checks**
+
+To deepen my checking of the data and the relationships within, I used the R package sp to plot the c.21000 individual properties onto a map. The first 200 pages of [@bivand2008applied] give a detailed practical guide to using the sp package for further research. 
 
 Sp can be used to create Spatial Class objects which are enriched with a range of useful functions. The plot in  figure \@ref(fig:Geo0) was created by layering my original property data set with an image file from Google Maps. The transform function was needed to align both data sets to the same elliptical co-ordinate system (WGS 84). The Google Maps file was actually a Raster Image, essentially a grid of points, each with a latitude and longitude reference and values for the level of Red, Green, Blue colours. I imported this as a Spatial Pixels Data-Frame. Using sp, I created the colourful image by layering the red, green and blue colour levels at each point. Finally I added the points representing each property. The dark red points are high value properties and the white dots low value properties.
 
@@ -216,5 +252,164 @@ In Figure \@ref(fig:Geo13) we see that the average number of multi-storey proper
 ```{r Geo13,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
 knitr::include_graphics("Analysis/Images/GeoPlotFloorNo.png")
 ```
+
+## Profile Analysis {#Profile}
+
+I want to apply Profile Analysis to statistically check that the relationships in the data are consistent with common sense. In Figure \@ref(fig:Outliers3), I segment the data according to (log) price quartile and plot the four mean co-ordinate vectors. (Each co-ordinate has been rescaled so that the units are similar.) 
+
+In order to build an Analytics tool that accurately predicts property price based on this data set, it is reasonable to demand that there are statistically significant differences between the mean vectors in Figure \@ref(fig:Outliers3). Since we are dealing with large sample sizes, this can be achieved with a One Way Multivariate Analysis of Variance Procedure (ref \@ref(prp:largesample) ).
+
+(ref:Visualisation1) Looking for Relationships.
+
+```{r Outliers3,echo=FALSE, fig.cap='(ref:Visualisation1)',fig.align='center'}
+knitr::include_graphics("Analysis/Images/Visualisation3.jpg")
+```
+
+
+**Assumptions: One way MANOVA**
+
+```{proposition, name="One Way Anove"}
+
+Lets denote each 12 dimensional observation in  each price quartile as follows.
+
+\begin{align}
+Quartile 1:& X_{11},X_{12},...X_{1n_{1}}\\
+Quartile 2:& X_{21},X_{22},...X_{2n_{2}}\\
+Quartile 3:& X_{31},X_{32},...X_{3_{3}}\\
+Quartile 4:& X_{41},X_{42},...X_{4n_{4}}
+\end{align}
+
+The key assumptions of a MANOVA Analysis become:
+
+1  $X_{11},X_{12},...X_{1n_{g}}$ is a Random Sample of size l from a population with mean $\mu_{l}$,l=1,..,4. The Random Samples from each group are independent.
+
+2 All populations have a common covariance matrix $\Sigma$
+
+3 Each population is a multivariate normal
+
+Lets denote $\mu_{i}=\mu+\tau_{i}$ where $\tau_{i}$ is the treatment effect of the ith quantile. We therefore assume the j-th observation from the ith quantile has the form:
+
+$$X_{ij}=\mu+\tau_{i}+e_{ij}$$
+
+where $e_{ij}$ is an independent $N(0,\sigma^2)$ univariate normal random variable.
+
+$\square$
+
+```
+
+See (see @johnson2014applied, page 296, section 6.4) for further details.
+
+**Hypothesis Testing**
+
+The Null hypothesis is that $\tau_{1}=\tau_{2}=\tau_{3}=\tau_{4}=0$. Lets perform a two sided test at the five percent significance level. In the first set of results below, exlcuing outliers, we reject the Null at the 5% level using the Wilks Lambda statistics.
+
+```{r,echo=FALSE}
+# Import data
+
+data<-read.csv(file="Analysis/Data/HousePriceData.csv",header=TRUE,
+                 sep=",",stringsAsFactors = TRUE)
+
+# Add Quantile Information
+a<-cut(data$LogSalePrice, breaks=c(quantile(data$LogSalePrice, probs = seq(0, 1, by = 0.25))), 
+    labels=c("0-25","25-50","50-75","75-100"), include.lowest=TRUE)
+
+data$quantile<-a
+
+#create data frame for the ANOVA
+
+data2<-data[,c("AboveGroundFloor",
+              "RenovationFlag",
+              "grade",
+              "condition",
+              "View",
+              "WaterfrontView",
+              "NumberOfFloors",
+              "NumberOfBedrooms",
+              "NumberOfBathrooms",
+              "SaleYear",
+              "ConstructionYear",
+              "TotalArea",
+              "BasementSize",
+              "LivingSpace",
+              "quantile")]
+#Manova Test
+
+test<-manova(cbind(AboveGroundFloor,
+                     RenovationFlag,
+                     grade,
+                     condition,
+                     View,
+                     WaterfrontView,
+                     NumberOfFloors,
+                   NumberOfBedrooms,
+                   NumberOfBathrooms,
+                   SaleYear,
+                   ConstructionYear,
+                   TotalArea,
+                   LivingSpace)
+                   ~quantile,data=data2)
+
+summary(test,test="Wilks")
+```
+
+Following the recommendation in (@johnson2014applied), we also reject the Null if we include the outliers:
+
+```{r,echo=FALSE}
+# Import data
+
+nooutlierdata<-read.csv(file="Analysis/Data/NoOutliers.csv",header=TRUE,
+                 sep=",",stringsAsFactors = TRUE)
+
+nooutlierdata$TransactionNo<-nooutlierdata$id
+
+alldata<-read.csv(file="Analysis/Data/HousePriceData.csv",header=TRUE,
+               sep=",",stringsAsFactors = TRUE)
+
+alldata<-merge(alldata,nooutlierdata,by="TransactionNo")
+
+# Add Quantile Information
+a<-cut(alldata$LogSalePrice, breaks=c(quantile(alldata$LogSalePrice, probs = seq(0, 1, by = 0.25))), 
+       labels=c("0-25","25-50","50-75","75-100"), include.lowest=TRUE)
+
+alldata$quantile<-a
+
+#create data frame for the ANOVA
+
+data3<-alldata[,c("AboveGroundFloor",
+               "RenovationFlag",
+               "grade.x",
+               "condition.x",
+               "View",
+               "WaterfrontView",
+               "NumberOfFloors",
+               "NumberOfBedrooms",
+               "NumberOfBathrooms",
+               "SaleYear",
+               "ConstructionYear",
+               "TotalArea",
+               "BasementSize",
+               "LivingSpace",
+               "quantile")]
+#Manova Test
+
+test<-manova(cbind(AboveGroundFloor,
+                   RenovationFlag,
+                   grade.x,
+                   condition.x,
+                   View,
+                   WaterfrontView,
+                   NumberOfFloors,
+                   NumberOfBedrooms,
+                   NumberOfBathrooms,
+                   SaleYear,
+                   ConstructionYear,
+                   TotalArea,
+                   LivingSpace)
+             ~quantile,data=data3)
+
+summary(test,test="Wilks")
+
+```
+
 
 ## Factor Analysis {#FactorAnalysis}
