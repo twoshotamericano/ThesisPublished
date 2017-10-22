@@ -255,9 +255,11 @@ knitr::include_graphics("Analysis/Images/GeoPlotFloorNo.png")
 
 ## Profile Analysis {#Profile}
 
-I want to apply Profile Analysis to statistically check that the relationships in the data are consistent with common sense. In Figure \@ref(fig:Outliers3), I segment the data according to (log) price quartile and plot the four mean co-ordinate vectors. (Each co-ordinate has been rescaled so that the units are similar.) 
+Having removed outliers, I want to check that the relationships in the data are consistent with common sense and that these relationships are statistically significant. For example, it is reasonable to expect that there are statistically significant differences between mean vectors when the data is segmented by price quartile. Since we are dealing with large sample sizes, such a test can be achieved with a One Way Multivariate Analysis of Variance Procedure (see [MANOVA](#MANOVA)).
 
-In order to build an Analytics tool that accurately predicts property price based on this data set, it is reasonable to demand that there are statistically significant differences between the mean vectors in Figure \@ref(fig:Outliers3). Since we are dealing with large sample sizes, this can be achieved with a One Way Multivariate Analysis of Variance Procedure (ref \@ref(prp:largesample) ).
+**Testing for differences between Price Quartiles**
+
+In Figure \@ref(fig:Outliers3), I segment the data according to (log) price quartile and plot the four mean co-ordinate vectors. (Each co-ordinate has been rescaled so that the units are similar.) It is clear that the profiles of the four quartiles are very similar. Comparing the Highest and Lowest Price Quartiles, we see there are more multi-floor properties with higher condition and with views in the Highest Quartile.
 
 (ref:Visualisation1) Looking for Relationships.
 
@@ -266,93 +268,103 @@ knitr::include_graphics("Analysis/Images/Visualisation3.jpg")
 ```
 
 
-**Assumptions: One way MANOVA**
-
-```{proposition, name="One Way Anove"}
-
-Lets denote each 12 dimensional observation in  each price quartile as follows.
-
-\begin{align}
-Quartile 1:& X_{11},X_{12},...X_{1n_{1}}\\
-Quartile 2:& X_{21},X_{22},...X_{2n_{2}}\\
-Quartile 3:& X_{31},X_{32},...X_{3_{3}}\\
-Quartile 4:& X_{41},X_{42},...X_{4n_{4}}
-\end{align}
-
-The key assumptions of a MANOVA Analysis become:
-
-1  $X_{11},X_{12},...X_{1n_{g}}$ is a Random Sample of size l from a population with mean $\mu_{l}$,l=1,..,4. The Random Samples from each group are independent.
-
-2 All populations have a common covariance matrix $\Sigma$
-
-3 Each population is a multivariate normal
-
-Lets denote $\mu_{i}=\mu+\tau_{i}$ where $\tau_{i}$ is the treatment effect of the ith quantile. We therefore assume the j-th observation from the ith quantile has the form:
-
-$$X_{ij}=\mu+\tau_{i}+e_{ij}$$
-
-where $e_{ij}$ is an independent $N(0,\sigma^2)$ univariate normal random variable.
-
-$\square$
-
-```
-
-See (see @johnson2014applied, page 296, section 6.4) for further details.
-
 **Hypothesis Testing**
+
+The following strategy is recommended for Multivariate Comparisons of Treatments in  @johnson2014applied:
+
+1.  Try to identify outliers
+2.  Perform a multivariate test of hypothesis
+3.  Calculate the Bonferroni simultaneous confidence intervals to identify components which differ significantly
 
 The Null hypothesis is that $\tau_{1}=\tau_{2}=\tau_{3}=\tau_{4}=0$. Lets perform a two sided test at the five percent significance level. In the first set of results below, exlcuing outliers, we reject the Null at the 5% level using the Wilks Lambda statistics.
 
+MULTIVARIATE TEST
+
+(ref:MANOVA1) MANOVA Analysis including outliers.
+
 ```{r,echo=FALSE}
+
+library(knitr)
+library(xtable)
+
 # Import data
 
 data<-read.csv(file="Analysis/Data/HousePriceData.csv",header=TRUE,
-                 sep=",",stringsAsFactors = TRUE)
+               sep=",",stringsAsFactors = TRUE)
 
 # Add Quantile Information
 a<-cut(data$LogSalePrice, breaks=c(quantile(data$LogSalePrice, probs = seq(0, 1, by = 0.25))), 
-    labels=c("0-25","25-50","50-75","75-100"), include.lowest=TRUE)
+       labels=c("0-25","25-50","50-75","75-100"), include.lowest=TRUE)
 
 data$quantile<-a
 
 #create data frame for the ANOVA
 
 data2<-data[,c("AboveGroundFloor",
-              "RenovationFlag",
-              "grade",
-              "condition",
-              "View",
-              "WaterfrontView",
-              "NumberOfFloors",
-              "NumberOfBedrooms",
-              "NumberOfBathrooms",
-              "SaleYear",
-              "ConstructionYear",
-              "TotalArea",
-              "BasementSize",
-              "LivingSpace",
-              "quantile")]
+               "RenovationFlag",
+               "grade",
+               "condition",
+               "View",
+               "WaterfrontView",
+               "NumberOfFloors",
+               "NumberOfBedrooms",
+               "NumberOfBathrooms",
+               "SaleYear",
+               "ConstructionYear",
+               "TotalArea",
+               "BasementSize",
+               "LivingSpace",
+               "quantile")]
+
+data2$sqft_above<-data2$AboveGroundFloor
+data2$sqft_living<-data2$LivingSpace
+data2$sqft_lot<-data2$TotalArea
+
+
+
 #Manova Test
 
-test<-manova(cbind(AboveGroundFloor,
-                     RenovationFlag,
-                     grade,
-                     condition,
-                     View,
-                     WaterfrontView,
-                     NumberOfFloors,
+fit.lm<-lm(cbind(sqft_above,
+                   RenovationFlag,
+                   grade,
+                   condition,
+                   View,
+                   WaterfrontView,
+                   NumberOfFloors,
                    NumberOfBedrooms,
                    NumberOfBathrooms,
                    SaleYear,
                    ConstructionYear,
-                   TotalArea,
-                   LivingSpace)
-                   ~quantile,data=data2)
+                   sqft_lot,
+                   sqft_living)
+             ~quantile,data=data2)
 
-summary(test,test="Wilks")
+fit.manova<-manova(fit.lm)
+
+print(summary(fit.manova, test="Wilks"))
+
+```
+
+
+```{r,fig.cap='(ref:MANOVA1)',fig.align='center',echo=FALSE}
+
+#Diagonal Elements of Residual Covariance Matrix
+
+rownames(fit.manova$coefficients)<-c("Base","Base->Q2","Base->Q3","Base->Q4")
+
+
+a<-diag(cov(fit.manova$residuals))*(0.5/21436)
+a<-as.data.frame(a)
+colnames(a)<-c("BF Range")
+
+tab<-(cbind(round(t(fit.manova$coefficients),2),round(2*3.775285*a,2)))
+kable(tab,type="html")
+
 ```
 
 Following the recommendation in (@johnson2014applied), we also reject the Null if we include the outliers:
+
+(ref:MANOVA2) MANOVA Analysis excluding outliers.
 
 ```{r,echo=FALSE}
 # Import data
@@ -373,9 +385,14 @@ a<-cut(alldata$LogSalePrice, breaks=c(quantile(alldata$LogSalePrice, probs = seq
 
 alldata$quantile<-a
 
+alldata$sqft_above<-alldata$AboveGroundFloor
+alldata$sqft_living<-alldata$LivingSpace
+alldata$sqft_lot<-alldata$TotalArea
+
+
 #create data frame for the ANOVA
 
-data3<-alldata[,c("AboveGroundFloor",
+data3<-alldata[,c("sqft_above",
                "RenovationFlag",
                "grade.x",
                "condition.x",
@@ -386,13 +403,13 @@ data3<-alldata[,c("AboveGroundFloor",
                "NumberOfBathrooms",
                "SaleYear",
                "ConstructionYear",
-               "TotalArea",
+               "sqft_lot",
                "BasementSize",
-               "LivingSpace",
+               "sqft_living",
                "quantile")]
 #Manova Test
 
-test<-manova(cbind(AboveGroundFloor,
+test<-manova(cbind(sqft_above,
                    RenovationFlag,
                    grade.x,
                    condition.x,
@@ -403,13 +420,33 @@ test<-manova(cbind(AboveGroundFloor,
                    NumberOfBathrooms,
                    SaleYear,
                    ConstructionYear,
-                   TotalArea,
-                   LivingSpace)
+                   sqft_lot,
+                   sqft_living)
              ~quantile,data=data3)
 
 summary(test,test="Wilks")
 
 ```
+
+
+```{r,fig.cap='(ref:MANOVA2)',echo=FALSE}
+
+#Diagonal Elements of Residual Covariance Matrix
+
+rownames(test$coefficients)<-c("Base","Base->Q2","Base->Q3","Base->Q4")
+
+
+a<-diag(cov(test$residuals))*(0.5/21436)
+a<-as.data.frame(a)
+colnames(a)<-c("BF Range")
+
+tab<-(cbind(round(t(test$coefficients),2),round(2*3.775285*a,2)))
+kable(tab,type="html")
+
+```
+
+BONFERRONI INTERVALS
+
 
 
 ## Factor Analysis {#FactorAnalysis}

@@ -8,9 +8,67 @@ In practice, the models we use to estimate best linear predictors make assumptio
 
 In the subsequent [Data](#Data) and [Analysis](#ProfileAnalysis) chapters, I want to investigate the best linear predictor of a response variable using four distinct Multivariate Techniques. My general objective is to end up with models with a limited number of factors (ie. data reduction) that offer significant insights into the data (ie ease of interpretation) and are technically sound (ie. statistical model fitting and selection).
 
-As we shall see each approach emphasises a different aspect of the sample data. The Classical Linear Regression approach focuses on the sample mean, the Principal Component Analysis approach emphasises the sample covariance matrix and Factor Analysis is a mixture of both. 
+As we shall see each approach emphasises a different aspect of the sample data. The Multivariate Analysis of Variance and Classical Linear Regression approach focus on the sample mean. The Principal Component Analysis approach emphasises the sample covariance matrix and Factor Analysis is a mixture of both. 
+
+## Multivariate Analysis of Variance {#MANOVA}
+
+Multivariate Analysis of Variance (MANOVA) is a technique that allows us to compare different populations. It is often used to determine whether the population mean vectors from different populations are the same (see @johnson2014applied, Section 6.4, page 297).
+
+**Assumptions**
+
+In MANOVA we arrange the Random Samples obtained from l populations as follows:
+
+$$\begin{align}
+Population_{1}:& X_{11},X_{12},...X_{1n_{1}}\\
+Population_{2}:& X_{21},X_{22},...X_{2n_{2}}\\
+\vdots      & \\
+Population_{l}:& X_{l1},X_{l2},...X_{ln_{l}}
+\end{align}
+$$
+
+The key assumptions of a MANOVA Analysis become:
+
+1  $X_{11},X_{12},...X_{1n_{g}}$ is a Random Sample of size $n_{g}$ from a population with mean $\mu_{g}$,g=1,..,l. The Random Samples from different populations are independent.
+
+2 All populations have a common covariance matrix $\Sigma$
+
+3 Each population is a multivariate normal. This if often implied through studying mean vectors in the limit of large Samples (ie. Central Limit Theorem applied)
+
+
+**MANOVA Model**
+
+The jth (p-dimensional) observation belonging to the ith population is modelled according to the following equation:
+
+$$X_{ij}=\mu+\tau_{i}+e_{ij}$$
+
+where $e_{ij}$ is an independent $N_{p}(0,\sigma^2)$ multivariate normal random variable. The parameter vector $\mu$ is an overall mean level and $\tau_{i}$ is the treatment effect of the ith population. The parameter $\mu$ is chosen so that $\sum_{i=1}^{l}n_{i}\tau_{i}=0$.
+
+**Hypothesis Testing**
+
+The test statistic in MANOVA hypothesis tests is Wilks lamba $\Lambda^*$. It is the quotient of the sum of squares and cross products between populations with the (mean corrected) total sum of squares.
+
+$$\Lambda^*=\frac{|W|}{|B + W|}=\frac{|\sum_{i=1}^l\sum_{j=1}^{n_{l}}(x_{ij}-\overline{x}_{i})(x_{ij}-\overline{x}_{i})^´|}{|\sum_{i=1}^l\sum_{j=1}^{n_{l}}(x_{ij}-\overline{x})(x_{ij}-\overline{x})^´|}$$
+Under the Null Hypothesis of no treatment effect between populations ($\tau_{1}=\tau_{2}=\tau_{3}=\dots=\tau_{l}=0$), we are testing whether $\Lambda^*$ is too small to reject. The exact distribution of $\Lambda^*$ has been derived for special cases and is typically output with the result set in computer packages.
+
+**Bonferroni Confidence Statements**
+
+For pairwise comparisons, simultaneous (Bonferroni) confidence intervals for the components of differences between treatment means can be constructed (see @johnson2014applied, Section 6.5, page 308):
+
+```{proposition, name="Simulataneous Confidence Statements"}
+
+Let $n=\sum_{i=1}^{l}n_{i}$. For the multivariate one-way MANOVA model, with confidence at least $(1-\alpha)$, $\tau_{ki}-\tau_{li}$ belongs to:
+
+$$\overline{x}_{ki}-\overline{x}_{li} \pm t_{n-g}\Bigg(\frac{\alpha}{pg(g-1)}\Bigg)\sqrt{\frac{w_{ii}}{n-g}\bigg(\frac{1}{n_{k}}+\frac{1}{n_{l}}\bigg)}$$
+
+for all components i=1,...,p and all differences l<k=1,....,g. By $w_{ii}$ we denote the i-th diagonal element of $W$, the residual matrix of square errors.
+
+$\square$
+
+```
 
 ## Classical Linear Regression {#LinReg}
+
+
 
 **Analytical Properties**
 
@@ -348,7 +406,7 @@ $\lambda_{i}$.
 
 ## Canonical Correlation Analysis {#Canonical}
 
-We saw in Section [] that the ability of a linear predictor to explain the variation in a response variable is measured by the coefficient of determination. The best linear predictor explains the most variation in the response $Y$ and maximises the absolute value of its correlation coefficient with $Y$. The upper limit on the correlation that can be achieved is the Multiple Correlation Coefficient $\rho_{Y(Z)}$.
+We saw in the [Linear Predictors Section](#LinearPredictor) that the ability of a linear predictor to explain the variation in a response variable is measured by the coefficient of determination. The best linear predictor explains the most variation in the response $Y$ and maximises the absolute value of its correlation coefficient with $Y$. The upper limit on the correlation that can be achieved is the Multiple Correlation Coefficient $\rho_{Y(Z)}$.
 
 Canonical Correlation Analysis is an extension of this approach. A key difference is that it takes linear combinations of **both** the "response" $\underset{(p \times 1)}{X^{(1)}}$ and "explanatory" $\underset{(q \times 1)}{X^{(1)}}$ sets of variables. In doing so, it finds transformed co-ordinates in which the correlations are higher than any individual entry in $\underset{(p \times q)}{\Sigma_{12}}$. In doing so, it answers questions like what is the maximum proportion of variation in data set (1) that can be explained by data set (2) and vice-versa?  
 
