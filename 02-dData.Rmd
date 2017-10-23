@@ -84,7 +84,7 @@ Finally, I used the Zillow API to obtain information on the rental value of prop
 
 The plots below show the data fields obtained through enrichment. Visualisation seems the most appropriate method for evaluating whether the Enrichment process was a success. Those data fields which do not offer a straightforward interpretation are likely to be unreliable.
 
-Some neighbourhood properties change significantly by location. The north-western region has both the highest number of schools within 1000m  and the highest number of doctors or dentist within 500m. Since there are significant numbers of libraries and public transport connections within this area, I interpret this region as wealthy and near to jobs.
+I used the R package sp to plot the c.21400 individual properties onto a map. The first 200 pages of [@bivand2008applied] give a detailed practical guide to using the sp package for further research. To improve the visual clarity of the images, I aggregated properties according to a 200m by 200m grid. I then calculated average values by grid cell and plotted the resuts below.
 
 (ref:Geo3) Number of Schools within 1000m by Location
 

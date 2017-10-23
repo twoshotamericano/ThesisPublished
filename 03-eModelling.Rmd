@@ -6,14 +6,7 @@ Are there statistically significant differences between properties in different 
 
 **Methodology**
 
-Since we are dealing with large sample sizes, such a test can be achieved with a One Way Multivariate Analysis of Variance Procedure (see [MANOVA](#MANOVA)).
-
-The following MANOVA strategy is recommended for Multivariate Comparisons of Treatments in  @johnson2014applied:
-
-1.  Try to identify outliers
-2.  Perform a multivariate test of hypothesis
-3.  Calculate the Bonferroni simultaneous confidence intervals to identify components which differ significantly
-
+Since we are dealing with large sample sizes, such a test can be achieved with a One Way Multivariate Analysis of Variance Procedure (see [MANOVA Section](#MANOVA) in the Introductory Theory Chapter).
 
 Figure \@ref(fig:Outliers3) shows why it is important to perform this test. The data is segmented according to (log) price quartile and the four mean co-ordinate vectors are plotted. (Each co-ordinate has been rescaled so that the units are comparable.) It is clear that the profiles of the four quartiles are very similar. Comparing the Highest and Lowest Price Quartiles, we see there are more multi-floor properties with higher condition and with views in the Highest Quartile. Otherwise there appear to be few differences.
 
@@ -23,6 +16,12 @@ Figure \@ref(fig:Outliers3) shows why it is important to perform this test. The 
 knitr::include_graphics("Analysis/Images/Visualisation3.jpg")
 ```
 
+
+The following MANOVA strategy is recommended for Multivariate Comparisons of Treatments in  @johnson2014applied:
+
+1.  Try to identify outliers
+2.  Perform a multivariate test of hypothesis
+3.  Calculate the Bonferroni simultaneous confidence intervals to identify components which differ significantly
 
 **Hypothesis Testing**
 
@@ -513,20 +512,228 @@ There is significant overlap between the Original Data set and the Original Data
 
 # Multivariate Regression Analysis {#MultiRegression}
 
+How accurately can we model property prices using a linear model?
+
+**Methodology**
+
+I am going to use a multiple linear regression model to model house prices. Please see the [Linear Regression Section](#LinReg) for an introduction to the technique.
+
+I expect a significant proportion of the variance in property values to be explained by a  Linear Model. This follows from the univariate plots in Figure \@ref(fig:LinearPlot1). Variables from the Original data set are plotted against Log Sale Price. Large $SS_{reg}$ values are observed for Sqft_living, sqft_basement,Sqft_Above, Grade andd Number of Bedrooms. Visually each of these covariates displays a wide range of values, with a line of best fit that dissects a long narrow data cloud.
 
 
-## Literature Review {#ModelLiterature}
+(ref:LinearPlot1) Linear Relations in the Original Data Set.
 
-## MANOVA {#MANOVA}
+```{r LinearPlot1,echo=FALSE, fig.cap='(ref:LinearPlot1)',fig.align='center'}
+knitr::include_graphics("Analysis/Images/UnivariatePlotOrig.png")
+
+```
+
+By contrast, I do not expect the variables from the Enriched Data Set to have significant explanatory power in a Multivariate Linear Regression Model. In Figure \@ref(fig:LinearPlot2), each of the plots displays significant scatter around the univariate lines of best fit and very small $SS_{reg}$ values are observed in comparison to Figure \@ref(fig:LinearPlot1).
+
+(ref:LinearPlot2) Linear Relations in the Enriched Data Set.
+
+```{r LinearPlot2,echo=FALSE, fig.cap='(ref:LinearPlot2)',fig.align='center'}
+knitr::include_graphics("Analysis/Images/UnivariatePlotEnr2.png")
+```
+
+**Model Fitting**
+
+To determine how accurately we can model property prices, I applied a step-wise Akaike fitting criterion from the MASS package. My starting model contained no covariates. I used the fully specified model, containing all variables in the data, to define an upper limit on the selection procedure. 
+
+The Akaike Criterion has a scale parameter which is used increase the penalty term for models with a large number of parameters. I manually tuned the scale parameter to 20, as this seemed to balance selecting a model with 8-10 covariates to one with only one or two. I chose to perform forward and backwards model selection.
+
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE}
+library(dplyr)
+library(MASS)
+
+data3<-read.table(file="Analysis/Data/EnrichedData",header=TRUE,
+                  sep=",",stringsAsFactors = TRUE)
+
+data2<-read.csv(file="Analysis/Data/NoOutliers.csv",header=TRUE,
+                sep=",",stringsAsFactors = TRUE)
+
+data2<-rename(data2,TransactionNo=id)
+
+data2<-subset(data2,select=c(TransactionNo,grade,condition))
+
+data3<-merge(data3,data2)
+
+
+#Split into Original and Enriched Pieces
+
+data3<-rename(data3,
+              AboveGroundFloorArea=AboveGroundFloor,
+              Condition=condition,
+              Grade=grade,
+              LotSize=TotalArea,
+              SchoolCount=Schools1000m,
+              DentistCount=DoctorDentist500m,
+              LibraryCount=Library750m,
+              FoodStoreCount=SupermarketGrocery750m,
+              StationCount=BusTrainTransitStation100m,
+              PoliceCount=PoliceStation1000m)
+
+data4<-subset(data3,select=c(ConstructionYear,
+                            LivingSpace,
+                            NumberOfFloors,
+                            RenovationYear,
+                            LotSize,
+                            BasementSize,
+                            NumberOfBedrooms,
+                            NumberOfBathrooms,
+                            Condition,
+                            Grade,
+                            View,
+                            WaterfrontView,
+                            SchoolCount,
+                            DentistCount,
+                            LibraryCount,
+                            FoodStoreCount,
+                            StationCount,
+                            PoliceCount,
+                            LogSalePrice
+))
+
+library(MASS)
+
+
+```
+
+
+
+```{r, eval=FALSE}
+
+library(MASS)
+
+null<-lm(LogSalePrice ~
+           1,data4)
+
+full<-lm(LogSalePrice ~
+           .,data4)
+
+output<-step(null,scope=list(lower=null,upper=full),direction="both",scale=20)
+
+
+```
+
+The results below show the impact of changing the scale parameter in the step-wise fitting procedure. The Scale Parameters were 100, 20, 10, 2, and 0.1 respectively for Models 1, 2, 3, 4, 5. It is clear that reducing the penalty term leads to selecting models with more parameters. Whilst the extra parameters in these highly specified models do remain significant, they don't however lead to large increases in the $R^2$ value. 
+
+The maximum $R^2$ value is in the region of 68%. 
+
+```{r,echo=FALSE, warning=FALSE,error=FALSE, results='asis'}
+library(xtable)
+library(texreg)
+
+fit1<-lm(LogSalePrice ~
+        Grade+ConstructionYear+LivingSpace+SchoolCount,data4)
+
+fit2<-lm(LogSalePrice ~
+        Grade+ConstructionYear+LivingSpace+SchoolCount+View,data4)
+
+fit3<-lm(LogSalePrice ~
+        Grade+
+          ConstructionYear+
+          LivingSpace+
+          SchoolCount+
+          View+
+          WaterfrontView+
+          FoodStoreCount+
+          LibraryCount,data4)
+
+
+fit4<-lm(LogSalePrice ~
+        Grade+
+          ConstructionYear+
+          LivingSpace+
+          SchoolCount+
+          View+
+          WaterfrontView+
+          FoodStoreCount+
+          LibraryCount+
+          Condition+
+          NumberOfBathrooms+
+          DentistCount,data4)
+
+fit5<-lm(LogSalePrice ~
+        Grade+
+          ConstructionYear+
+          LivingSpace+
+          SchoolCount+
+          View+
+          WaterfrontView+
+          FoodStoreCount+
+          LibraryCount+
+          Condition+
+          NumberOfBathrooms+
+          DentistCount+
+          NumberOfBedrooms+
+          PoliceCount+
+          RenovationYear+
+          LotSize+
+          NumberOfFloors,data4)
+
+
+a<-anova(fit1,fit5)
+
+b<-data.frame(Model=c("Fit1","Fit5"),
+              DoF=a$Res.Df,
+              RSS=round(a$RSS,0),
+              "DOF_Diff"=a$Df,
+              SUmOfSq=a$`Sum of Sq`,
+              FProb=round(a$`Pr(>F)`,2))
+
+table2<-xtable(b,
+               caption="Statistical Test Model 5 vs Model 1")
+
+
+htmlreg(list(fit1,fit2,fit3,fit4,fit5),
+       caption='Automated Model Selection',
+       caption.above=TRUE)
+
+```
+
+
+```{r, echo=FALSE, eval=FALSE}
+
+fit<-lm(LogSalePrice~
+          Grade+
+          ConstructionYear+
+          LivingSpace+
+          SchoolCount+
+          View,data4)
+
+summary(fit)
+
+```
+
+**Model Selection and Checking**
+
+The plots below were generated for Model 4. Figure \@ref(fig:LinearPlot3), shows the residual errors of the Model versus a number of Covariates. The density plots do not show significant patterns and are consistent with what is expected from white noise. 
+(ref:LinearPlot3) Residual Plots
+
+```{r LinearPlot3,echo=FALSE, fig.cap='(ref:LinearPlot3)',fig.align='center'}
+knitr::include_graphics("Analysis/Images/Plot25.jpg")
+```
+
+Figure \@ref(fig:LinearPlot4), gives quantile-quantile plots for the residuals of the model versus those of a normal distribution. The points closely fit a straight line, which is consistent with the model residuals being generated by a $N(0,\sigma^2)$ distribution.
+
+(ref:LinearPlot4) QQPlots
+
+```{r LinearPlot4,echo=FALSE, fig.cap='(ref:LinearPlot4)',fig.align='center'}
+plot(fit4,which=2)
+```
+
+
+**Conclusion**
+
+It is possible to fit a linear model to the Property Data Set and explain around 68% of the variation in (Logged) Property Prices. Furthermore such a model is compatible with the assumptions of a Multiple Linear Regression Model.
 
 # (PART) Analytics Tool {-}
 
 # Example Tool {#Tool}
 
-**Model**
-Have a go at model fitting
-
-
+Here is an example Analytics tool built with the Shiny Package in R.
 
 ```{r Model,echo=FALSE, eval=FALSE}
 library(webshot)
@@ -537,6 +744,3 @@ knitr::include_app("https://twoshotamericano.shinyapps.io/datavisual/", height="
 ```
 
 
-To deepen my checking of the data and the relationships within, I used the R package sp to plot the c.21000 individual properties onto a map. The first 200 pages of [@bivand2008applied] give a detailed practical guide to using the sp package for further research. 
-
-Sp can be used to create Spatial Class objects which are enriched with a range of useful functions. The plot in  figure \@ref(fig:Geo0) was created by layering my original property data set with an image file from Google Maps. The transform function was needed to align both data sets to the same elliptical co-ordinate system (WGS 84). The Google Maps file was actually a Raster Image, essentially a grid of points, each with a latitude and longitude reference and values for the level of Red, Green, Blue colours. I imported this as a Spatial Pixels Data-Frame. Using sp, I created the colourful image by layering the red, green and blue colour levels at each point. Finally I added the points representing each property. The dark red points are high value properties and the white dots low value properties.
