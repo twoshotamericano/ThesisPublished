@@ -480,7 +480,7 @@ The key difference is that the "explanatory variables" or "factor scores" $F$ ar
 
 (see @johnson2014applied, Section 9.2, page 483)
 
-```{definition, name="Orthogonal Factor Model with m Common Factors"}
+```{definition, OrthFactor, name="Orthogonal Factor Model with m Common Factors"}
 
 $$\underset{(p \times 1)}{X}=\underset{(p \times 1)}{\mu}+\underset{(p \times m)}{L}\underset{(m \times 1)}{F}+\underset{(p \times 1)}{\epsilon}$$
 

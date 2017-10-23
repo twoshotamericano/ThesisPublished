@@ -1,16 +1,6 @@
 # Traditional Approach {#TraditionalApproach}
 
-```{r setup, include=FALSE}
-library(dplyr)
-library(xtable)
-library(MASS)
-library(texreg)
 
-data2<-read.table(file="Analysis/Data/HousePriceData.csv",header=TRUE,sep=",",stringsAsFactors = TRUE)
-
-options("xtable.type"="html")
-
-```
 
 **Recap**
 
@@ -86,95 +76,11 @@ The table below shoes the micro-variables identified online, the reference artic
 **Correlation Matrix**
 
 
-```{r, echo=FALSE}
-#Some data manipulation to convert factors to numeric
-#Base R cannot calculate a correlation matrix with factor variables
-data3<-data2
 
-#Rename a Variable
-data3<-rename(data3,
-              AboveGroundFloorArea=AboveGroundFloor,
-              Condition=condition,
-              Grade=grade)
-
-#Reclassify a factor
-data3$RenovationFlag<-as.numeric(levels(data2$RenovationFlag)=="Yes")[data2$RenovationFlag]
-data3$SeattleFlag<-as.numeric(levels(data2$SeattleFlag)=="Yes")[data2$SeattleFlag]
-
-#Subset the dataframe
-data3<-subset(data3,select=c(ConstructionYear,
-                      LivingSpace,
-                      NumberOfFloors,
-                      SeattleFlag,
-                      RenovationYear,
-                      TotalArea,
-                      NumberOfBedrooms,
-                      NumberOfBathrooms,
-                      Condition,
-                      Grade,
-                      AboveGroundFloorArea,
-                      BasementSize,
-                      SaleMonth,
-                      View,
-                      RenovationFlag,
-                      WaterfrontView,
-                      SaleYear,
-                      LogSalePrice
-                      ))
-
-data4<-subset(data3,select=c(ConstructionYear,
-                      LivingSpace,
-                      NumberOfFloors,
-                      SeattleFlag,
-                      RenovationYear,
-                      TotalArea,
-                      NumberOfBedrooms,
-                      NumberOfBathrooms,
-                      Condition,
-                      Grade
-                      ))
-
-```
-
-The correlation plot below shows that none of the data-set variables identified from the meta analysis are highly correlated (r>80%). This means they can all be included in the model without causing issues regarding multi-collinearity and non-convergence of the model fitting algorithm.
-
-```{r, echo=FALSE}
-mcor1<-round(cor(data4),digits=2)
-col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
-corrplot::corrplot(mcor1, 
-         method="shade", 
-         cl.cex=0.75,
-         shade.col=NA, 
-         type="lower",
-         addCoef.col="black",
-         tl.srt=45,
-         addCoefasPercent = TRUE,
-         number.cex=0.75
-         )
-
-
-
-
-
-```
 
 The full correlation plot for the data-set is shown below. The bottom row shows the correlations between the data-set variables and `LogSalePrice`. The top five correlated variables are `LivingSpace`, `Grade`,`AboveGroundFloorArea`, `NumberOfBathrooms`, `View`. All of which are positively correlated with `LogSalePrice`.
 
-```{r, echo=FALSE}
-#Full Correlation Matrix
-mcor2<-round(cor(data3),digits=2)
-col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
-corrplot::corrplot(mcor2, 
-         method="shade", 
-         cl.cex=0.5,
-         shade.col=NA, 
-         type="lower",
-         addCoef.col="black",
-         tl.srt=45,
-         addCoefasPercent = TRUE,
-         number.cex=0.5
-         )
-```
+
 
 
 

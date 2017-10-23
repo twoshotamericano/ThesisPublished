@@ -1,6 +1,519 @@
 # (PART) Modelling {-}
 
-# Model Selection {#ModelSelection}
+# Profile Analysis {#Profile}
+
+Are there statistically significant differences between properties in different price quartiles?
+
+**Methodology**
+
+Since we are dealing with large sample sizes, such a test can be achieved with a One Way Multivariate Analysis of Variance Procedure (see [MANOVA](#MANOVA)).
+
+The following MANOVA strategy is recommended for Multivariate Comparisons of Treatments in  @johnson2014applied:
+
+1.  Try to identify outliers
+2.  Perform a multivariate test of hypothesis
+3.  Calculate the Bonferroni simultaneous confidence intervals to identify components which differ significantly
+
+
+Figure \@ref(fig:Outliers3) shows why it is important to perform this test. The data is segmented according to (log) price quartile and the four mean co-ordinate vectors are plotted. (Each co-ordinate has been rescaled so that the units are comparable.) It is clear that the profiles of the four quartiles are very similar. Comparing the Highest and Lowest Price Quartiles, we see there are more multi-floor properties with higher condition and with views in the Highest Quartile. Otherwise there appear to be few differences.
+
+(ref:Visualisation1) Looking for Relationships.
+
+```{r Outliers3,echo=FALSE, fig.cap='(ref:Visualisation1)',fig.align='center'}
+knitr::include_graphics("Analysis/Images/Visualisation3.jpg")
+```
+
+
+**Hypothesis Testing**
+
+$H_{0}:\tau_{1}=\tau_{2}=\tau_{3}=\tau_{4}=0$. Lets perform a two sided test at the five percent significance level. 
+
+The test results below show that, for the data set exlusing outliers, the 0.453 value for Wilks Lambda is significant at the 0.1% level and hence $H_{0}$ should be rejected. 
+
+```{r MANOVA1,echo=FALSE}
+
+library(knitr)
+library(xtable)
+
+# Import data
+
+data<-read.csv(file="Analysis/Data/HousePriceData.csv",header=TRUE,
+               sep=",",stringsAsFactors = TRUE)
+
+# Add Quantile Information
+a<-cut(data$LogSalePrice, breaks=c(quantile(data$LogSalePrice, probs = seq(0, 1, by = 0.25))), 
+       labels=c("0-25","25-50","50-75","75-100"), include.lowest=TRUE)
+
+data$quantile<-a
+
+#create data frame for the ANOVA
+
+data2<-data[,c("AboveGroundFloor",
+               "RenovationFlag",
+               "grade",
+               "condition",
+               "View",
+               "WaterfrontView",
+               "NumberOfFloors",
+               "NumberOfBedrooms",
+               "NumberOfBathrooms",
+               "SaleYear",
+               "ConstructionYear",
+               "TotalArea",
+               "BasementSize",
+               "LivingSpace",
+               "quantile")]
+
+data2$sqft_above<-data2$AboveGroundFloor
+data2$sqft_living<-data2$LivingSpace
+data2$sqft_lot<-data2$TotalArea
+
+
+
+#Manova Test
+
+fit.lm<-lm(cbind(sqft_above,
+                   RenovationFlag,
+                   grade,
+                   condition,
+                   View,
+                   WaterfrontView,
+                   NumberOfFloors,
+                   NumberOfBedrooms,
+                   NumberOfBathrooms,
+                   SaleYear,
+                   ConstructionYear,
+                   sqft_lot,
+                   sqft_living)
+             ~quantile,data=data2)
+
+fit.manova<-manova(fit.lm)
+
+
+print(summary(fit.manova, test="Wilks"))
+
+```
+
+
+Following the recommendation in (@johnson2014applied), we repeat the test using the data with outliers.Again the value for Wilks Lambda of 0.453 is significant at the 0.1% level and hence $H_{0}$ should be rejected.
+
+```{r,echo=FALSE}
+# Import data
+
+nooutlierdata<-read.csv(file="Analysis/Data/NoOutliers.csv",header=TRUE,
+                 sep=",",stringsAsFactors = TRUE)
+
+nooutlierdata$TransactionNo<-nooutlierdata$id
+
+alldata<-read.csv(file="Analysis/Data/HousePriceData.csv",header=TRUE,
+               sep=",",stringsAsFactors = TRUE)
+
+alldata<-merge(alldata,nooutlierdata,by="TransactionNo")
+
+# Add Quantile Information
+a<-cut(alldata$LogSalePrice, breaks=c(quantile(alldata$LogSalePrice, probs = seq(0, 1, by = 0.25))), 
+       labels=c("0-25","25-50","50-75","75-100"), include.lowest=TRUE)
+
+alldata$quantile<-a
+
+alldata$sqft_above<-alldata$AboveGroundFloor
+alldata$sqft_living<-alldata$LivingSpace
+alldata$sqft_lot<-alldata$TotalArea
+
+
+#create data frame for the ANOVA
+
+data3<-alldata[,c("sqft_above",
+               "RenovationFlag",
+               "grade.x",
+               "condition.x",
+               "View",
+               "WaterfrontView",
+               "NumberOfFloors",
+               "NumberOfBedrooms",
+               "NumberOfBathrooms",
+               "SaleYear",
+               "ConstructionYear",
+               "sqft_lot",
+               "BasementSize",
+               "sqft_living",
+               "quantile")]
+#Manova Test
+
+test<-manova(cbind(sqft_above,
+                   RenovationFlag,
+                   grade.x,
+                   condition.x,
+                   View,
+                   WaterfrontView,
+                   NumberOfFloors,
+                   NumberOfBedrooms,
+                   NumberOfBathrooms,
+                   SaleYear,
+                   ConstructionYear,
+                   sqft_lot,
+                   sqft_living)
+             ~quantile,data=data3)
+
+summary(test,test="Wilks")
+
+```
+
+The Treatment effects and the width of the simultaneous Bonferroni confidence intervals ($\alpha=0.05$)are given below. Due to the c5000 observations in each quantile the confidence intervals are very narrow and even small differences in treatment effects are significant.
+
+```{r Cor1,fig.align='center',echo=FALSE}
+
+#Diagonal Elements of Residual Covariance Matrix
+
+rownames(fit.manova$coefficients)<-c("Base","Base->Q2","Base->Q3","Base->Q4")
+
+
+a<-diag(cov(fit.manova$residuals))*(0.5/21436)
+a<-as.data.frame(a)
+colnames(a)<-c("BF Range")
+
+tab<-(cbind(round(t(fit.manova$coefficients),2),round(2*3.775285*a,2)))
+kable(tab,type="html")
+
+```
+
+```{r MANOVA2,echo=FALSE, eval=FALSE}
+
+#Diagonal Elements of Residual Covariance Matrix
+
+rownames(test$coefficients)<-c("Base","Base->Q2","Base->Q3","Base->Q4")
+
+
+a<-diag(cov(test$residuals))*(0.5/21436)
+a<-as.data.frame(a)
+colnames(a)<-c("BF Range")
+
+tab<-(cbind(round(t(test$coefficients),2),round(2*3.775285*a,2)))
+kable(tab,type="html")
+
+```
+
+**Conclusion**
+
+We reject the Null at the 5% level, both with and without outliers, using the Wilks Lambda statistic. We conclude that there are statistically significant differences in the data between the mean vectors of the top, middle, lower and bottom price quartiles.
+
+# Factor Analysis {#FactorAnalysis}
+
+Is it possible to describe a Property data set with a few variables? Do these variables have sensible interpretations?
+
+**Methodology**
+
+I will use Orthogonal Factor Analysis, to investigate whether the original data is consistent with a lower dimensional description (see [Factor Analysis](#Factor) for theoretical introduction). 
+
+Factor Analysis is designed to group variables with high pairwise correlations. In the data, Number of Bathrooms, Grade, Living Space, Number of Bedrooms and LogSalePrice all have large pairwise correlations (see below). It is therefore compelling to perform a Factor Anaysis:
+
+
+```{r setup, include=FALSE}
+library(psych)
+library(nFactors)
+
+library(dplyr)
+library(xtable)
+library(MASS)
+library(texreg)
+
+data2<-read.csv(file="Analysis/Data/HousePriceData.csv",header=TRUE,
+               sep=",",stringsAsFactors = TRUE)
+
+
+options("xtable.type"="html")
+
+```
+
+```{r setup2, echo=FALSE,warning=FALSE}
+#Some data manipulation to convert factors to numeric
+#Base R cannot calculate a correlation matrix with factor variables
+data3<-data2
+
+#Rename a Variable
+data3<-rename(data3,
+              AboveGroundFloorArea=AboveGroundFloor,
+              Condition=condition,
+              Grade=grade,
+              LotSize=TotalArea)
+
+#Reclassify a factor
+data3$RenovationFlag<-as.numeric(levels(data2$RenovationFlag)=="Yes")[data2$RenovationFlag]
+data3$SeattleFlag<-as.numeric(levels(data2$SeattleFlag)=="Yes")[data2$SeattleFlag]
+
+#Subset the dataframe
+data3<-subset(data3,select=c(ConstructionYear,
+                      LivingSpace,
+                      NumberOfFloors,
+                      SeattleFlag,
+                      RenovationYear,
+                      LotSize,
+                      NumberOfBedrooms,
+                      NumberOfBathrooms,
+                      Condition,
+                      Grade,
+                      AboveGroundFloorArea,
+                      BasementSize,
+                      SaleMonth,
+                      View,
+                      RenovationFlag,
+                      WaterfrontView,
+                      SaleYear,
+                      LogSalePrice
+                      ))
+
+data4<-subset(data3,select=c(ConstructionYear,
+                      LivingSpace,
+                      NumberOfFloors,
+                      SeattleFlag,
+                      RenovationYear,
+                      LotSize,
+                      BasementSize,
+                      NumberOfBedrooms,
+                      NumberOfBathrooms,
+                      Condition,
+                      Grade,
+                      LogSalePrice
+                      ))
+
+```
+
+
+```{r Cor2, echo=FALSE, warning=FALSE}
+mcor1<-round(cor(data4),digits=2)
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+corrplot::corrplot(mcor1, 
+         method="shade", 
+         cl.cex=0.75,
+         shade.col=NA, 
+         type="lower",
+         addCoef.col="black",
+         tl.srt=45,
+         addCoefasPercent = TRUE,
+         number.cex=0.75
+         )
+
+
+```
+
+It is important to note that there is no clearly defined procedure for measuring the quality of a Factor Analysis (see @johnson2014applied, Chapter 9, page 526 for further comments). Judging the success of a Factor Analysis depends on the subjective opinion of the investigator. Factor Anaylsis can have "Wow" factor by revealing insights that would otherwise be missed. 
+
+**Model Fitting**
+
+I applied a Principal Component Solution to the Orthogonal Factor Model using the psych and nFactors packages in R. Prior to applying the Factor Model, I standardised all the variables to have zero mean and unit variance. I estimated the Principal Components using a Singular Value Decomposition Method. As is convention when seeking to improve the interpretability of Principal Components, I performed an orthogonal Varimax rotation.
+
+The scree plot in Figure \@ref(fig:Modelling1) indicated that five factors were an acceptable approximation to the data:
+
+(ref:Modelling1) Number of Components in Factor Analysis
+
+```{r Modelling1,echo=FALSE, fig.cap='(ref:Modelling1)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/ScreePlot.png")
+```
+
+**Results**
+
+The results of model fitting are shown below. The top block of results gives the co-ordinate representation of each of the five Orthogonal Factors (Column Headings RC1,..). The second block of results below gives the proportion of the total sample variance in the data explained by each Factor. The Factors have been ordered with decreasing eigenvalues. 
+
+Overall using Five Factors it is possible to explain 80% of the variation in the 10 variables (cf. Cumulative Var). This represents a good fit. A linear relationship with 5 Common Factors is able to explain 80% of the variation in 10 Variables with the remaining 20% assumed to be noise. 
+
+In the Orthogonal Factor Model (see \@ref(def:OrthFactor), the "h2"  column gives the %age of each variable's variance attributable to the five Common Factors. Number of Bedrooms is the only variate for which the first Five Factors only explains less than 70% of the variance. 
+
+```{r FactorFit, echo=FALSE, warning=FALSE}
+
+drops<-c("SeattleFlag","SaleMonth","RenovationFlag")
+data4<-data4[,!(names(data4) %in% drops)]
+fit <- principal(data4, nfactors=5, rotate="varimax")
+fit
+```
+
+**Analysis**
+
+The Orthogonal Factor Model and the multiple Mulivariate Regression Model can be interpreted similarly. For example, the components of a Factor represent the expected change in the response variable to a one unit change in the Factor.
+
+RC1 could be interpretated as an Index of Property Value. A property is an investment and a pleace to live. A one unit increase of RC1, increases the price, property grade, size of living space, number of bathrooms, number of bedrooms significantly. RC2 relates to Internal Space Configuration. Properties with large values for RC2 have low numbers of floors and large Liveable or Basement Spaces. RC4 is an index of plot size. High values of RC5 are associated with modern buildings in poor condition. High values of RC3 with older properties, recently renovated.
+
+**Conclusion**
+
+I wanted to describe my Property data set using fewer variables. I fitted Orthogonal Factor Models with up to 10 Factors both with and without Varimax Rotations. I found that an orthogonal factor model with five Factors can account for 80% of the variation in the property data set.
+
+Even in cases with more than five Factors, the components of the top Factors were similar to those described above. I do not feel that the five Factors are more easily understood the original variables and this is a key consideration in Factor Analysis. Given the lack of "Wow Factor", I do not proceed further with Factor Analysis.
+
+# Correlation Analysis {#CanonAnalysis}
+
+Does the enriched data-set contain new information or is there significant overlap with the original data?
+
+**Methodology**
+
+I will use Canonical Correlation Analysis to measure the degree of overlap between the two data sets (see [Canonical Correlation Analysis](#Canonical) for a theoretical introduction).
+
+I expect significant overlap between the original and enriched data set. Variables in the original data set which do not represent geospatial information are indeed highly correlated with geospatial features. For exapmple in figure \@ref(fig:Geo12), I used the sp package to aggregate 21,436 properties in 200m by 200m grids and then to plot the average construction year by grid. We see that the oldest properties are located in the north-west region and properties get progressively newer as we move east. 
+
+(ref:Geo12) Plot of Property Construction Year by Location
+
+```{r Geo12,echo=FALSE, fig.cap='(ref:Geo4)',fig.align='center',dpi=60}
+knitr::include_graphics("Analysis/Images/GeoPlotConstructionYr.png")
+```
+
+**Model Fitting**
+
+I have modelled six Geospatial variables from the Enriched Data Set and 10 non-Geospatial variables from the Original Data set. The pair-wise correlations are shown below:
+
+```{r SetupCanon, echo=FALSE, warning=FALSE,message=FALSE}
+#Necessary Packages
+library(CCA)
+library(robustHD)
+
+#Load the data
+
+data3<-read.table(file="Analysis/Data/EnrichedData",header=TRUE,
+               sep=",",stringsAsFactors = TRUE)
+
+data2<-read.csv(file="Analysis/Data/HousePriceData.csv",header=TRUE,
+                sep=",",stringsAsFactors = TRUE)
+
+data2<-subset(data2,select=c(TransactionNo,grade,condition))
+
+data3<-merge(data3,data2)
+
+
+#Split into Original and Enriched Pieces
+
+data3<-rename(data3,
+              AboveGroundFloorArea=AboveGroundFloor,
+              Condition=condition,
+              Grade=grade,
+              LotSize=TotalArea,
+              SchoolCount=Schools1000m,
+              DentistCount=DoctorDentist500m,
+              LibraryCount=Library750m,
+              FoodStoreCount=SupermarketGrocery750m,
+              StationCount=BusTrainTransitStation100m,
+              PoliceCount=PoliceStation1000m)
+
+orig<-subset(data3,select=c(ConstructionYear,
+                                   LivingSpace,
+                                   NumberOfFloors,
+                                   RenovationYear,
+                                   LotSize,
+                                   BasementSize,
+                                   NumberOfBedrooms,
+                                   NumberOfBathrooms,
+                                   Condition,
+                                   Grade
+))
+
+
+
+
+enr<-subset(data3,select=c(SchoolCount,
+                           DentistCount,
+                           LibraryCount,
+                           FoodStoreCount,
+                           StationCount,
+                           PoliceCount))
+
+a<-round(matcor(orig,enr)$XYcor,2)
+
+corrplot::corrplot(a[1:10,11:16], 
+                   method="shade", 
+                   cl.cex=0.75,
+                   shade.col=NA, 
+                   type="lower",
+                   addCoef.col="black",
+                   tl.srt=45,
+                   addCoefasPercent = TRUE,
+                   number.cex=0.75
+)
+
+
+
+```
+
+The correlations between the first six pairs of canonical variates are shown below. The Canonical Correlation between the first pair (v1, U1) is 57%, this is much higher than any entry in the correlation matrix above and shows the power of the canoncical co-ordinate transformation. There is clearly significant overlap between the information in each data-set.
+
+```{r setupCanon2, echo=FALSE}
+
+
+orig<-standardize(orig, centerFun = mean, scaleFun = sd)                           
+
+
+enr<-standardize(enr, centerFun = mean, scaleFun = sd)                           
+
+
+##Canonical Correlates
+
+cc1<-cc(enr,orig)
+
+table0<-as.data.frame(t(round(cc1$cor,2)))
+
+table0<-rename(table0, Corr1=V1,Corr2=V2,Corr3=V3,Corr4=V4,Corr5=V5,Corr6=V6)
+
+knitr::kable(
+  table0,
+  caption = 'Canonical Correlation Values'
+)
+
+```
+
+**Analysis**
+
+The correlation of each canonical variate with its respective data set is shown below. Variable V1 from the enriched data set is highly positively correlated with number of Schools, Dentists, Libraries and Food stores. V1 appears to measure Neighbourhood Services
+
+U1 from the original data set is strongly negatively associated with Construction Year, Living Space, Lot Size, Number of Bedrooms.  U1 appears to measure older, smaller properties. 
+
+The 57% correlation between V1 and U1 is likely explained by smaller, older properties being in highly urbanised areas near to lots of services. This can actually be visualised by comparing Figure \@ref(fig:Geo12) with the plots in the [Enrichment Results Section](#EnrichmentResults).
+
+
+```{r resultsCanon, echo=FALSE}
+#table1<-as.data.frame(round(cc1$xcoef,2))
+#knitr::kable(
+ # table1,
+  #caption = 'Coefficient Values'
+#)
+
+table2<-as.data.frame(round(cc1$scores$corr.X.xscores,2))
+
+knitr::kable(
+  table2,
+  caption = 'Correlation Values'
+)
+
+#table3<-as.data.frame(round(cc1$ycoef,2))
+#table3<-rename(table3,U1=V1,
+ #              U2=V2,
+  #             U3=V3,
+   #            U4=V4,
+    #           U5=V5,
+     #          U6=V6)
+
+#knitr::kable(
+ # table3,
+  #caption = 'Coefficient Values'
+#)
+
+table4<-as.data.frame(round(cc1$scores$corr.Y.yscores,2))
+
+table4<-rename(table4,U1=V1,
+               U2=V2,
+               U3=V3,
+               U4=V4,
+               U5=V5,
+               U6=V6)
+
+knitr::kable(
+  table4,
+  caption = 'Correlation Values'
+)
+```
+
+
+**Conclusions**
+
+There is significant overlap between the Original Data set and the Original Data set. The value for the first canonical correlation was 57%. Even though it does not appear possible at first glance, variables such as Construction Year have a geospatial pattern. It is these geospatial patterns which generate the large canonical correlation values with the enriched data set.
+
+# Multivariate Regression Analysis {#MultiRegression}
+
+
 
 ## Literature Review {#ModelLiterature}
 
@@ -13,10 +526,17 @@
 **Model**
 Have a go at model fitting
 
-```{r,echo=FALSE, warning=FALSE}
+
+
+```{r Model,echo=FALSE, eval=FALSE}
 library(webshot)
 library(knitr)
 
 knitr::include_app("https://twoshotamericano.shinyapps.io/datavisual/", height="600px")
 
 ```
+
+
+To deepen my checking of the data and the relationships within, I used the R package sp to plot the c.21000 individual properties onto a map. The first 200 pages of [@bivand2008applied] give a detailed practical guide to using the sp package for further research. 
+
+Sp can be used to create Spatial Class objects which are enriched with a range of useful functions. The plot in  figure \@ref(fig:Geo0) was created by layering my original property data set with an image file from Google Maps. The transform function was needed to align both data sets to the same elliptical co-ordinate system (WGS 84). The Google Maps file was actually a Raster Image, essentially a grid of points, each with a latitude and longitude reference and values for the level of Red, Green, Blue colours. I imported this as a Spatial Pixels Data-Frame. Using sp, I created the colourful image by layering the red, green and blue colour levels at each point. Finally I added the points representing each property. The dark red points are high value properties and the white dots low value properties.

@@ -80,7 +80,7 @@ Finally, I used the Zillow API to obtain information on the rental value of prop
 
 ## Outliers and Errors {#EnrichmentResults}
 
-**Visualisations**
+***Geospatial Analysis***
 
 The plots below show the data fields obtained through enrichment. Visualisation seems the most appropriate method for evaluating whether the Enrichment process was a success. Those data fields which do not offer a straightforward interpretation are likely to be unreliable.
 
@@ -159,7 +159,7 @@ knitr::include_graphics("Analysis/Images/GeoRental1.png")
 
 The enriched data set is found [online](ThesisPublished/Analysis/Data/EnrichedData).
 
-## Correlation Analysis {#CanonAnalysis}
+
 
 ## Code {#Code}
 
